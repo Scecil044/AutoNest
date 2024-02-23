@@ -4,12 +4,18 @@ import colors from "colors";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { connectDb } from "./config/db.js";
+import path from "path";
+// importing routes
+import vehicleRoutes from "./routes/vehicle.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 connectDb();
 // Initialize Express and port
 const app = express();
 const port = 3400 || process.env.PORT;
+const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -17,8 +23,15 @@ app.use(cookieParser());
 app.use(cors());
 
 // App Routes
+app.use("/api/auth", authRoutes);
+app.use("/api", userRoutes);
+app.use("/api/vehicles", vehicleRoutes);
 
 // Deployment configurations
+app.use(express.static(path.join(__dirname, "client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 
 // App Middleware
 app.use((err, req, res, next) => {
