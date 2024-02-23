@@ -1,0 +1,1 @@
+- This is an application built to automate the sale of vehicles in kenya
