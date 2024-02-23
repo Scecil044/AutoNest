@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 import colors from "colors";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { connectDb } from "./config/db.js";
 
 dotenv.config();
+connectDb();
 // Initialize Express and port
 const app = express();
 const port = 3400 || process.env.PORT;
