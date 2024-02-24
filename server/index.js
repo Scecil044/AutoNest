@@ -24,7 +24,7 @@ app.use(cors());
 
 // App Routes
 app.use("/api/auth", authRoutes);
-app.use("/api", userRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 
 // Deployment configurations

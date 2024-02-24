@@ -6,8 +6,10 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { IoLocation } from "react-icons/io5";
 import { IoLogoWhatsapp } from "react-icons/io";
 
+
 export default function Footer() {
-  return (
+
+  return  (
     <div className="text-white">
       <div className="bg-[#292929] p-5">
         <h1 className="text-white p-5">
@@ -108,20 +110,49 @@ export default function Footer() {
         <div className="h-[1px] w-full bg-gray-400 mt-3"></div>
         <p className="text-[13px] mt-3">{companyInfo}</p>
       </div>
-      <div className="bg-[#292929] flex justify-between sm:hidden p-5 text-sm">
+      <div className="bg-[#292929] flex justify-between sm:hidden p-3 text-sm">
         <Link className="flex flex-col items-center">
-          <FaPhoneVolume className="h-7 w-7" />
+          <FaPhoneVolume className="h-5 w-6" />
           Book a tour
         </Link>
         <Link className="flex flex-col items-center">
-          <IoLocation className="h-7 w-7" />
+          <IoLocation className="h-5 w-6" />
           Locate us
         </Link>
         <Link className="flex flex-col items-center">
-          <IoLogoWhatsapp className="h-7 w-7" />
+          <IoLogoWhatsapp className="h-5 w-6" />
           Message us
         </Link>
       </div>
+      <div className="bg-[#292929] px-5 py-2 hidden md:block">
+        <div className="flex justify-between text-sm">
+          <span> AutoNestKenya&copy;{new Date().getFullYear()}</span>
+          <span className="flex items-center gap-3">
+            <Link>
+              <img
+                src="/icons8-facebook.svg"
+                alt="facebook"
+                className="object-cover h-8 w-8 rounded-full"
+              />
+            </Link>
+            <Link>
+              <img
+                src="/icons8-instagram.svg"
+                alt="instagram"
+                className="object-cover h-8 w-8 rounded-full"
+              />
+            </Link>
+            <Link>
+              <img
+                src="/icons8-telegram.svg"
+                alt="telegram"
+                className="object-cover h-8 w-8 rounded-full"
+              />
+            </Link>
+          </span>
+        </div>
+      </div>
     </div>
+  
   );
 }

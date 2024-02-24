@@ -1,5 +1,7 @@
 import User from "../models/User.model.js";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
+import bcrypt_js from "bcryptjs";
 
 // Function to register new user
 export const registerUser = async (req, res, next) => {
@@ -47,7 +49,54 @@ export const registerUser = async (req, res, next) => {
     });
     // return new user with password excluded
     newUser.password = undefined;
-    res.status(200).json(newUser);
+    res.status(200).json("User created successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Function to login user
+export const login = async (req, res, next) => {
+  const { password, email } = req.body;
+  if (!password || !email || password === "" || email === "")
+    return next(errorHandler(400, "input all required fields"));
+  try {
+    const isValidUser = await User.findOne({ email });
+    const isValidPassword = bcrypt_js.compareSync(
+      password,
+      isValidUser.password
+    );
+    if (!isValidPassword || !isValidUser)
+      return next(errorHandler(403, "Invalid credentials"));
+
+    //Check if account is disabled
+    if (isValidUser.isDisabled)
+      return next(
+        errorHandler(
+          403,
+          "Your account is disabled. This may take a few days before restoration. Contact the system admin for more details"
+        )
+      );
+    // generate token
+    const token = jwt.sign(
+      { id: isValidUser._id, isAdmin: isValidUser.isAdmin },
+      process.env.JWT_SECRET
+    );
+
+    const { password: pass, ...rest } = isValidUser._doc;
+    res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//  logout function
+export const logout = async (req, res, next) => {
+  try {
+    res.clearCookie("access_token").json("Logout successful");
   } catch (error) {
     next(error);
   }
