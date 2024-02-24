@@ -153,7 +153,7 @@ export default function Register() {
             />
           </div>
         )}
-        <button className="py-1 px-2 w-full flex items-center justify-center">
+        <button className="py-1 px-2 w-full flex items-center justify-center bg-popsicle">
           Continue
         </button>
         <div className="mt-5 text-sm">

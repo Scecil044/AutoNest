@@ -32,7 +32,13 @@ export const createVehicle = async (req, res, next) => {
     return next(errorHandler(400, "Provide all required fields"));
   try {
     const text =
-      req.body.brand + " " + req.body.model + " " + req.body.description.text;
+      req.body.brand +
+      " " +
+      req.body.model +
+      " " +
+      req.body.description.text +
+      " " +
+      req.body.registrationNumber;
     const slug = text
       .split(" ")
       .join("-")
@@ -71,6 +77,7 @@ export const getVehicles = async (req, res, next) => {
       ...(req.query.year && { year: req.query.year }),
       ...(req.query.mileage && { mileage: req.query.mileage }),
       ...(req.query.color && { color: req.query.color }),
+      ...(req.query.slug && { slug: req.query.slug }),
       ...(req.query.searchTerm && {
         $or: [
           { brand: { $regex: req.query.searchTerm, $options: "i" } },
@@ -78,6 +85,7 @@ export const getVehicles = async (req, res, next) => {
           { color: { $regex: req.query.searchTerm, $options: "i" } },
           { year: { $regex: req.query.searchTerm, $options: "i" } },
           { mileage: { $regex: req.query.searchTerm, $options: "i" } },
+          { slug: { $regex: req.query.searchTerm, $options: "i" } },
         ],
       }),
     })

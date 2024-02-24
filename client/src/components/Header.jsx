@@ -18,7 +18,7 @@ export default function Header() {
         <form
           onSubmit={handleSearch}
           onClick={() => setShowDropShadow(true)}
-          className="bg-white"
+          className="bg-white md:ml-20"
         >
           <input
             type="text"
@@ -31,8 +31,9 @@ export default function Header() {
         </form>
 
         <nav className="flex gap-2">
-          <button>
+          <button className="flex items-center gap-1 hover:bg-black/50 px-2 py-3">
             <FaPhoneVolume className="h-8 w-6" />
+            Contact us
           </button>
           <button className="bg-popsicle py-3 px-4 flex items-center">
             <FaRegUser className="h-6" />

@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Users from "./pages/admin/Users";
 import AdminLayout from "./components/AdminLayout";
 import Cars from "./pages/Cars";
+import ViewCar from "./pages/ViewCar";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -34,6 +35,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cars" element={<Cars />} />
+          <Route path="/details/:slug" element={<ViewCar />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* Admin routes */}
