@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLoader from "./common/DashboardLoader";
 import { Link } from "react-router-dom";
+import Oauth from "./Oauth";
 
 export default function CarsCard() {
   const [vehicleData, setVehicleData] = useState([]);
@@ -58,9 +59,7 @@ export default function CarsCard() {
 
         <div className="flex flex-col items-center justify-center my-5 text-sm">
           <h3>See Personalized Recommendations?</h3>
-          <Link to="/login" className="py-1 px-24 bg-popsicle">
-            Sign In
-          </Link>
+          <Oauth />
           <span>
             New? Create one.{" "}
             <Link className="text-blue-600" to="/register">

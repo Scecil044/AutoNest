@@ -98,6 +98,47 @@ export const getVehicles = async (req, res, next) => {
   }
 };
 
+// function to fetch popular vehicles
+export const popularVehicles = async (req, res, next) => {
+  const sortDirection = req.query.order === "asc" ? 1 : -1;
+  try {
+    const popularCars = await Vehicle.find({
+      $or: [
+        { brand: { $regex: /toyota|mazda/i } },
+        {
+          model: {
+            $regex:
+              /fielder|cx5|swift|golf|axio|tiguan|m5|c200|tx|crown|ranger/i,
+          },
+        },
+      ],
+    }).sort({ createdAt: sortDirection });
+    res.status(200).json(popularCars);
+  } catch (error) {
+    next(error, "an error was encountered, could not fetch popular cars");
+  }
+};
+
+// function to fetch top spec models
+export const fetchTopSpecModels = async (req, res, next) => {
+  try {
+    const sortDirection = req.query.order === "asc" ? 1 : -1;
+    const topSpecCars = await Vehicle.find({
+      $or: [
+        {
+          brand: {
+            $regex:
+              /mercedes|bmw|ford|volkswagen|porsche|chevrolet|range|land rover|audi/i,
+          },
+        },
+        { cubicCapacity: { $gte: 3000 } },
+      ],
+    }).sort({ createdAt: sortDirection });
+    res.status(200).json(topSpecCars);
+  } catch (error) {
+    next(error);
+  }
+};
 // Function to update vehicle
 export const updateVehicle = async (req, res, next) => {
   const {

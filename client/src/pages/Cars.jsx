@@ -121,7 +121,7 @@ export default function Cars() {
       <div className="flex">
         <Sidebar />
 
-        <div>
+        <div className="w-full">
           <div className="shadow-lg p-2 mb-2">
             <span className="text-sm">
               1-48 of over 100,000 results for{" "}
@@ -672,8 +672,8 @@ Brands */}
                 <button className="py-1 px-2">Cancel</button>
               </div>
             </div>
-            <div className="flex-1">
-              <div className="h-72 p-2 bg-gradient-to-tr from-black to-gray-400"></div>
+            <div className="flex-1 w-full">
+              <div className="h-72 p-2 bg-gradient-to-tr from-black to-gray-400 w-full"></div>
               <CarsCard />
             </div>
           </main>

@@ -5,7 +5,7 @@ import {
   loginFulfilledState,
   loginPendingState,
   loginRejectedState,
-} from "../firbase/userSlice";
+} from "../firebase/userSlice";
 import { toast } from "react-toastify";
 
 export default function Register() {

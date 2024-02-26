@@ -22,9 +22,18 @@ const userSlice = createSlice({
       state.isError = action.payload;
       state.isLoading = false;
     },
+    signOutUser: (state) => {
+      state.user = null;
+      state.isLoading(false);
+      state.isError(false);
+    },
   },
 });
 
-export const { loginPendingState, loginFulfilledState, loginRejectedState } =
-  userSlice.actions;
+export const {
+  loginPendingState,
+  loginFulfilledState,
+  loginRejectedState,
+  signOutUser,
+} = userSlice.actions;
 export default userSlice.reducer;
