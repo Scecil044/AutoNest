@@ -6,10 +6,8 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { IoLocation } from "react-icons/io5";
 import { IoLogoWhatsapp } from "react-icons/io";
 
-
 export default function Footer() {
-
-  return  (
+  return (
     <div className="text-white">
       <div className="bg-[#292929] p-5">
         <h1 className="text-white p-5">
@@ -153,6 +151,5 @@ export default function Footer() {
         </div>
       </div>
     </div>
-  
   );
 }

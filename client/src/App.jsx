@@ -14,6 +14,8 @@ import Users from "./pages/admin/Users";
 import AdminLayout from "./components/AdminLayout";
 import Cars from "./pages/Cars";
 import ViewCar from "./pages/ViewCar";
+import Search from "./pages/Search";
+import AppLayout from "./components/AppLayout";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -31,23 +33,24 @@ export default function App() {
     <>
       <ToastContainer />
       <Router>
-        <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/cars" element={<Cars />} />
-          <Route path="/details/:slug" element={<ViewCar />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          {/* Admin routes */}
-          <Route path="" element={<AdminLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<UserProfile />} />
-            <Route path="/users" element={<Users />} />
+          <Route path="" element={<AppLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/cars" element={<Cars />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/details/:slug" element={<ViewCar />} />
+            {/* Admin routes */}
+            <Route path="" element={<AdminLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/users" element={<Users />} />
+            </Route>
           </Route>
 
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {showFooter && <Footer />}
       </Router>
     </>
   );

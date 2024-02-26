@@ -78,12 +78,22 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center font-lato">
+    <div className="min-h-screen flex flex-col items-center justify-center font-lato">
       <form
         onSubmit={handleSubmit}
-        className="w-[350px] mx-auto p-5 flex flex-col gap-3"
+        className="w-[350px] mx-auto p-5 flex flex-col gap-3 shadow-lg"
       >
-        <h1 className="text-2xl">Sign Up</h1>
+        <div className="relative mb-8">
+          <h1 className="text-center text-2xl font-bold z-50 absolute right-24">
+            AutoNe<span className="">st</span>Kenya
+          </h1>
+          <img
+            src="/nest.png"
+            alt="logo"
+            className="object-cover h-16 w-16 absolute top-0 right-36 blur-[1px]"
+          />
+        </div>
+        <h1 className="text-3xl  text-neutral-400">Sign Up</h1>
         <div className="flex flex-col gap-1">
           <label>First Name</label>
           <input
@@ -153,7 +163,7 @@ export default function Register() {
             />
           </div>
         )}
-        <button className="py-1 px-2 w-full flex items-center justify-center bg-popsicle">
+        <button className="py-1 px-2 w-full flex items-center justify-center bg-darkGreen text-white">
           Continue
         </button>
         <div className="mt-5 text-sm">
@@ -162,7 +172,25 @@ export default function Register() {
             Terms of service and use
           </Link>
         </div>
+
+        <div className="text-sm flex flex-col">
+          <span className="font-semibold">Buy for Business</span>
+          <Link className="text-blue-500 hover:underline">
+            Want to sell on AutoNestKe?
+          </Link>
+        </div>
       </form>
+      <div className="mt-3 flex flex-col gap-1">
+        <h1 className="text-sm text-neutral-400 text-center">
+          Have an account?
+        </h1>
+        <Link
+          to="/login"
+          className="py-1 px-3 hover:bg-blue-50 shadow-lg w-[350px] border border-gray-300 flex items-center justify-center"
+        >
+          Login
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
 import Sidebar from "../components/common/Sidebar";
+import TopSpecCars from "./TopSpecCars";
 import Vehicles from "./Vehicles";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen font-lato">
       <div className="flex">
         <Sidebar />
         <main className="w-full">
@@ -13,9 +15,12 @@ export default function Home() {
                 <h1>Our Statement:</h1>
                 <h1>Drive Safe & Clean</h1>
               </span>
-              <button className="flex bg-[#555] py-2 px-2 mt-5 md:mt-10 md:py-3 md:px-6 hover:opacity-85">
-                Learn More
-              </button>
+              <Link
+                to="/cars"
+                className=" bg-[#555] py-2 px-2 mt-5 md:mt-10 md:py-3 md:px-6 hover:opacity-85"
+              >
+                View Inventory
+              </Link>
             </div>
             <div className="">
               <img
@@ -28,6 +33,10 @@ export default function Home() {
 
           <div>
             <Vehicles />
+          </div>
+
+          <div>
+            <TopSpecCars />
           </div>
         </main>
       </div>

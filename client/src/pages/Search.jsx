@@ -1,127 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
-import CarsCard from "../components/CarsCard";
+import { useEffect } from "react";
 import Sidebar from "../components/common/Sidebar";
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import CarsCard from "../components/CarsCard";
 
-export default function Cars() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    brand: [],
-    size: [],
-    color: [],
-    status: [],
-    availability: "",
-    sustainability: false,
-    price: [],
-    mileage: [],
-    cubicCapacity: [],
-  });
+export default function Search() {
+  const handleChange = (e) => {};
+  const handleSearch = () => {};
 
-  const handleChange = (e) => {
-    const isChecked = e.target.checked;
-    const { id } = e.target;
-
-    if (isChecked) {
-      if (e.target.name === "brand") {
-        setFormData({ ...formData, brand: [...formData.brand, id] });
-      } else if (e.target.name === "size") {
-        setFormData({ ...formData, size: [...formData.size, id] });
-      } else if (e.target.name === "status") {
-        setFormData({ ...formData, status: [...formData.status, id] });
-      } else if (e.target.name === "sustainability") {
-        setFormData({ ...formData, sustainability: e.target.checked });
-      } else if (e.target.name === "availability") {
-        setFormData({ ...formData, availability: "all" });
-      } else if (e.target.name === "price") {
-        setFormData({ ...formData, price: [...formData.price, id] });
-      } else if (e.target.name === "mileage") {
-        setFormData({
-          ...formData,
-          mileage: [...formData.mileage, id],
-        });
-      } else if (e.target.name === "color") {
-        setFormData({
-          ...formData,
-          color: [...formData.color, id],
-        });
-      } else if (e.target.name === "cubicCapacity") {
-        setFormData({
-          ...formData,
-          cubicCapacity: [...formData.cubicCapacity, parseInt(id)],
-        });
-      }
-    } else {
-      if (e.target.name === "brand") {
-        setFormData({
-          ...formData,
-          brand: formData.brand.filter((item) => item !== id),
-        });
-      } else if (e.target.name === "size") {
-        setFormData({
-          ...formData,
-          size: formData.size.filter((item) => item !== id),
-        });
-      } else if (e.target.name === "status") {
-        setFormData({
-          ...formData,
-          status: formData.status.filter((item) => item !== parseInt(id)),
-        });
-      } else if (e.target.name === "sustainability") {
-        setFormData({
-          ...formData,
-          sustainability: false,
-        });
-      } else if (e.target.name === "availability") {
-        setFormData({
-          ...formData,
-          availability: "",
-        });
-      } else if (e.target.name === "price") {
-        setFormData({
-          ...formData,
-          price: formData.price.filter((item) => item !== parseInt(id)),
-        });
-      } else if (e.target.name === "mileage") {
-        setFormData({
-          ...formData,
-          mileage: formData.mileage.filter((item) => item !== parseInt(id)),
-        });
-      } else if (e.target.name === "color") {
-        setFormData({
-          ...formData,
-          color: formData.color.filter((item) => item !== id),
-        });
-      } else if (e.target.name === "cubicCapacity") {
-        setFormData({
-          ...formData,
-          cubicCapacity: formData.cubicCapacity.filter(
-            (item) => item !== parseInt(id)
-          ),
-        });
-      }
-    }
-  };
-  const handleSearch = () => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    urlParams.set("availability", formData.availability);
-    urlParams.set("sustainability", formData.sustainability);
-    urlParams.set("price", formData.price.join(","));
-    urlParams.set("cubicCapacity", formData.cubicCapacity.join(","));
-    urlParams.set("mileage", formData.mileage.join(","));
-    urlParams.set("brand", formData.brand.join(","));
-    urlParams.set("color", formData.color.join(","));
-    urlParams.set("size", formData.size.join(","));
-    urlParams.set("status", formData.status.join(","));
-    const searchQuery = urlParams.toString();
-    navigate(`/search?${searchQuery}`);
-  };
-  console.log(formData);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+  }, [location.search]);
   return (
-    <div className="min-h-screen font-lato">
+    <div className="min-h-screen">
       <div className="flex">
         <Sidebar />
 
-        <div>
+        <div className="w-full">
           <div className="shadow-lg p-2 mb-2">
             <span className="text-sm">
               1-48 of over 100,000 results for{" "}
@@ -672,9 +567,25 @@ Brands */}
                 <button className="py-1 px-2">Cancel</button>
               </div>
             </div>
+            {/* right component */}
             <div className="flex-1">
-              <div className="h-72 p-2 bg-gradient-to-tr from-black to-gray-400"></div>
-              <CarsCard />
+              <div className="h-72 p-2 bg-gradient-to-tr from-black via-darkGreen to-gray-black/50 w-full flex items-center justify-center ">
+                <form className=" w-[85%] md:w-[70%] bg-gray-300 rounded-2xl">
+                  <div className="flex">
+                    <input
+                      type="text"
+                      placeholder="Type something to search"
+                      id=""
+                      onChange={handleChange}
+                      className="bg-inherit w-full border-none focus:outline-none focus:ring-0"
+                    />
+                    <button className="px-2 border-none outline-none bg-darkGreen text-white rounded-r-2xl">
+                      Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div>search results</div>
             </div>
           </main>
         </div>

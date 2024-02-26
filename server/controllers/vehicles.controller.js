@@ -74,8 +74,7 @@ export const getVehicles = async (req, res, next) => {
     const vehicles = await Vehicle.find({
       ...(req.query.brand && { brand: req.query.brand }),
       ...(req.query.model && { model: req.query.model }),
-      ...(req.query.year && { year: req.query.year }),
-      ...(req.query.mileage && { mileage: req.query.mileage }),
+
       ...(req.query.color && { color: req.query.color }),
       ...(req.query.slug && { slug: req.query.slug }),
       ...(req.query.searchTerm && {
@@ -83,8 +82,6 @@ export const getVehicles = async (req, res, next) => {
           { brand: { $regex: req.query.searchTerm, $options: "i" } },
           { model: { $regex: req.query.searchTerm, $options: "i" } },
           { color: { $regex: req.query.searchTerm, $options: "i" } },
-          { year: { $regex: req.query.searchTerm, $options: "i" } },
-          { mileage: { $regex: req.query.searchTerm, $options: "i" } },
           { slug: { $regex: req.query.searchTerm, $options: "i" } },
         ],
       }),
@@ -103,8 +100,44 @@ export const getVehicles = async (req, res, next) => {
 
 // Function to update vehicle
 export const updateVehicle = async (req, res, next) => {
+  const {
+    brand,
+    year,
+    model,
+    registrationNumber,
+    cubicCapacity,
+    color,
+    description,
+    mileage,
+    images,
+  } = req.body;
   try {
-    res.status(200).json("update ");
+    const vehicle = await Vehicle.findById(req.params.id);
+    if (!vehicle)
+      return next(
+        errorHandler(
+          404,
+          `No vehicle with matching id ${req.params.id} was found`
+        )
+      );
+    const updatedVehicle = await Vehicle.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          model,
+          year,
+          brand,
+          registrationNumber,
+          cubicCapacity,
+          color,
+          description,
+          mileage,
+          images,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedVehicle);
   } catch (error) {
     next(error);
   }
@@ -112,8 +145,28 @@ export const updateVehicle = async (req, res, next) => {
 
 // Function to delete vehicle
 export const deleteVehicle = async (req, res, next) => {
+  if (!req.user.isAdmin)
+    return next(
+      errorHandler(403, "You do not have permission to complete this action")
+    );
   try {
-    res.status(200).json("delete new");
+    const vehicle = await Vehicle.findById(req.params.id);
+    if (!vehicle)
+      return next(
+        errorHandler(
+          404,
+          `No vehicle with matching id ${req.params.id} was found`
+        )
+      );
+    if (req.user.id !== vehicle.userRef.toString())
+      return next(
+        errorHandler(
+          403,
+          "Forbidden. You have no rights to complete this action"
+        )
+      );
+    await Vehicle.findByIdAndDelete(req.params.id);
+    res.status(200).json("Vehicle deletion successful");
   } catch (error) {
     next(error);
   }
