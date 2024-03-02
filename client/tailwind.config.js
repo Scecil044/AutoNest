@@ -14,6 +14,8 @@ export default {
         popsicle: "#E99A24", // dark orange
         blueberry: "#171516", // dark
         mango: "#FFEO83",
+        linen: "#fdfaf5",
+        pampas: "#e9e5df",
       },
       fontFamily: {
         roboto: "roboto",

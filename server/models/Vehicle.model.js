@@ -4,6 +4,7 @@ const vehicleSchema = new mongoose.Schema(
   {
     userRef: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     brand: {
       type: String,

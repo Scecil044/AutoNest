@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import DashboardLoader from "./common/DashboardLoader";
 import { Link } from "react-router-dom";
 import Oauth from "./Oauth";
+import QueueAnim from "rc-queue-anim";
 
 export default function CarsCard() {
   const [vehicleData, setVehicleData] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showMore, setShowMore] = useState(true);
 
   useEffect(() => {
     const fetchVehicles = async () => {
@@ -20,9 +22,12 @@ export default function CarsCard() {
           setIsLoading(false);
           return;
         }
-        setVehicleData(data);
-        setIsLoading(false);
-        setIsError(false);
+        if (res.ok) {
+          setVehicleData(data);
+          setIsLoading(false);
+          setIsError(false);
+     
+        }
       } catch (error) {
         setIsError(error.message);
         setIsLoading(false);
@@ -30,6 +35,31 @@ export default function CarsCard() {
     };
     fetchVehicles();
   }, []);
+  const handleShowMore = async () => {
+    try {
+      setIsError(false);
+      setIsLoading(true);
+      const startIndex = vehicleData.length;
+      const res = await fetch(
+        `/api/vehicles/get/vehicles?startIndex=${startIndex}`
+      );
+      const data = await res.json();
+      console.log(data.vehicles.length);
+      if (data.success === false) {
+        setIsError(data.message);
+        setIsLoading(false);
+        return;
+      }
+      if (res.ok) {
+     
+        setIsLoading(false);
+        setIsError(false);
+      }
+    } catch (error) {
+      setIsError(error.message);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -38,7 +68,10 @@ export default function CarsCard() {
           Showing {vehicleData?.vehicles?.length} of {vehicleData.totalVehicles}{" "}
           vehicles
         </h1>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 transition-all duration-100">
+        <QueueAnim
+          delay={400}
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 transition-all duration-100"
+        >
           {vehicleData?.vehicles?.map((vehicle, index) => (
             <div className="shadow-md" key={index}>
               <Link to={`/details/${vehicle.slug}`}>
@@ -55,7 +88,14 @@ export default function CarsCard() {
               </div>
             </div>
           ))}
-        </div>
+        </QueueAnim>
+
+        <button
+          onClick={handleShowMore}
+          className="hover:bg-blue-50 py-2 w-full flex items-center justify-center shadow-md tracking-wide my-2"
+        >
+          Show More ...
+        </button>
 
         <div className="flex flex-col items-center justify-center my-5 text-sm">
           <h3>See Personalized Recommendations?</h3>

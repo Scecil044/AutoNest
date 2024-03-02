@@ -16,6 +16,11 @@ import Cars from "./pages/Cars";
 import ViewCar from "./pages/ViewCar";
 import Search from "./pages/Search";
 import AppLayout from "./components/AppLayout";
+import Services from "./pages/Services";
+import Support from "./pages/Support";
+import Vehicles from "./pages/admin/Vehicles";
+import Companies from "./pages/admin/Companies";
+import GuestLayout from "./components/GuestLayout";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -38,17 +43,23 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/support" element={<Support />} />
             <Route path="/details/:slug" element={<ViewCar />} />
-            {/* Admin routes */}
-            <Route path="" element={<AdminLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/users" element={<Users />} />
-            </Route>
+          </Route>
+          {/* Admin routes */}
+          <Route path="" element={<AdminLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile/:id" element={<UserProfile />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/vehicles" element={<Vehicles />} />
+            <Route path="/companies" element={<Companies />} />
           </Route>
 
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="" element={<GuestLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

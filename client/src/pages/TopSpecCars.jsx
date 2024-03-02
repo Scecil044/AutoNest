@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLoader from "../components/common/DashboardLoader";
 import { Link } from "react-router-dom";
+import QueueAnim from "rc-queue-anim";
 
 export default function TopSpecCars() {
   const [vehicles, setVehicles] = useState([]);
@@ -35,7 +36,10 @@ export default function TopSpecCars() {
       <div className="p-5">
         <h1 className="text-2xl">Top Spec Cars</h1>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 mt-5 gap-5">
+        <QueueAnim
+          delay={300}
+          className="grid grid-cols-2 md:grid-cols-4 mt-5 gap-5"
+        >
           {vehicles.slice(0, 12).map((vehicle, index) => (
             <div key={index} className="shadow-lg bg-white">
               <div className="overflow-hidden relative">
@@ -54,7 +58,7 @@ export default function TopSpecCars() {
               </div>
             </div>
           ))}
-        </div>
+        </QueueAnim>
       </div>
 
       {isLoading && <DashboardLoader />}

@@ -1,6 +1,6 @@
 export default function TermsAndConditions() {
   return (
-    <div>
+    <div className="">
       <p>
         We are a credit broker, not a lender or an independent financial
         advisor. We can introduce you to a limited number of lenders & their

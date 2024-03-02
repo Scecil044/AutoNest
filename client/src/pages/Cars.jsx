@@ -445,7 +445,7 @@ Brands */}
                   <span className="ml-3 flex items-center gap-1">
                     <input
                       type="checkbox"
-                      id="100000"
+                      id="1000000"
                       name="price"
                       onChange={handleChange}
                       className="text-popsicle focus:ring-popsicle"
@@ -558,7 +558,7 @@ Brands */}
                     onChange={handleChange}
                     type="checkbox"
                     name="color"
-                    id="gray"
+                    id="grey"
                     className="p-2 border-2 border-gray-300 rounded-full focus:ring-darkGreen text-[#C5E8EE] bg-[#C5E8EE] h-7 w-7"
                   />
                 </span>

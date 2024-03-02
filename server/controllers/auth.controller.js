@@ -49,7 +49,7 @@ export const registerUser = async (req, res, next) => {
     });
     // return new user with password excluded
     newUser.password = undefined;
-    res.status(200).json("User created successfully");
+    res.status(200).json(newUser);
   } catch (error) {
     next(error);
   }
@@ -88,6 +88,53 @@ export const login = async (req, res, next) => {
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// function to handle login with google
+export const continueWithGoogle = async (req, res, next) => {
+  const { displayName, image, email } = req.body;
+  try {
+    // check if user exists
+    const isExistingUser = await User.findOne({ email });
+    if (!isExistingUser) {
+      const randomPassword = bcrypt_js.hashSync(
+        Math.random().toString(36).slice(-8)
+      );
+      const generatedUserName =
+        displayName.join("") + Math.random().toString(36).slice(-8);
+
+      // create user
+      const newUser = User.create({
+        firstName: displayName[0],
+        lastName: displayName[1],
+        userName: generatedUserName,
+        email,
+        password: randomPassword,
+        profilePicture: image,
+      });
+      // generate token
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: pwd, ...rest } = newUser._doc;
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    } else {
+      // gENERATE TOKEN
+      const token = jwt.sign(
+        { id: isExistingUser._id },
+        process.env.JWT_SECRET
+      );
+      // remove password from json
+      isExistingUser.password = undefined;
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(isExistingUser);
+    }
   } catch (error) {
     next(error);
   }

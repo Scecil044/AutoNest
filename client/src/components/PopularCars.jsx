@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import QueueAnim from "rc-queue-anim";
 
 export default function PopularCars() {
   const [vehicles, setVehicles] = useState([]);
@@ -35,7 +36,10 @@ export default function PopularCars() {
       <div className="p-5">
         <h1 className="text-2xl">PopularCars</h1>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 mt-5 gap-5">
+        <QueueAnim
+          delay={300}
+          className="grid grid-cols-2 md:grid-cols-4 mt-5 gap-5"
+        >
           {vehicles.map((vehicle, index) => (
             <div key={index} className="shadow-lg bg-white">
               <div className="overflow-hidden relative">
@@ -54,7 +58,7 @@ export default function PopularCars() {
               </div>
             </div>
           ))}
-        </div>
+        </QueueAnim>
       </div>
     </div>
   );

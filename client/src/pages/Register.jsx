@@ -48,9 +48,9 @@ export default function Register() {
     }
     if (formData.password !== formData.passwordConfirmation) {
       setConfirmationError("Passwords did not match!");
+      return;
     } else {
       setConfirmationError(null);
-      return;
     }
     dispatch(loginPendingState());
     try {

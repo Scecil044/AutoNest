@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
-import { FaPhoneVolume } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { IoLogOutOutline } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
@@ -32,23 +31,11 @@ export default function Header() {
   // function to logout user
   const logoutUser = async () => {
     try {
-      setIsLoading(false);
-      setIsError(false);
-      const res = await fetch("/api/auth/logout");
-      const data = await res.json();
-      if (data.success === false) {
-        setIsLoading(false);
-        setIsError(data.message);
-        return;
-      }
-      if (res.ok) {
-        setIsLoading(false);
-        setIsError(false);
-        dispatch(signOutUser());
-      }
+      await fetch("/api/auth/logout");
+      dispatch(signOutUser());
+      setHandleDropDown(false);
     } catch (error) {
-      setIsError(error.message);
-      setIsLoading(false);
+      console.log(error);
     }
   };
   useEffect(() => {
@@ -67,7 +54,7 @@ export default function Header() {
 
         <form
           onSubmit={handleSearch}
-          onClick={() => setShowDropShadow(true)}
+          value={searchTerm}
           className="bg-white md:ml-20 relative"
         >
           <input
@@ -107,7 +94,7 @@ export default function Header() {
           )}
         </nav>
         {handleDropDown && (
-          <div className="absolute right-0 top-12 text-black bg-white shadow-md w-[180px] rounded-sm">
+          <div className="absolute right-0 top-12 text-black bg-white shadow-md w-[180px] rounded-sm z-10">
             <div className="flex flex-col">
               <Link className="flex gap-1 items-center py-2 px-2 w-full hover:bg-black/50 hover:text-white transition-all duration-200">
                 <FaUserFriends className="h-7 w-7" />

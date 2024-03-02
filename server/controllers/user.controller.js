@@ -32,7 +32,7 @@ export const getUsers = async (req, res, next) => {
       const { password, ...rest } = user._doc;
       return rest;
     });
-    res.status(200).json({ users: usersWithoutPassword });
+    res.status(200).json(usersWithoutPassword);
   } catch (error) {
     next(error);
   }
@@ -56,7 +56,7 @@ export const deleteUser = async (req, res, next) => {
           `No user with matching id : ${req.params.id} was found`
         )
       );
-    res.status(200).json("User deleted successfully");
+    res.status(200).json(user._id);
   } catch (error) {
     next(error);
   }
@@ -74,6 +74,11 @@ export const updateUser = async (req, res, next) => {
     return next(
       errorHandler(`No user with matching id ${req.params.id} was found!`)
     );
+  // Check if password is provided in the request body
+  let hashedPassword;
+  if (req.body.password) {
+    hashedPassword = bcrypt_js.hashSync(req.body.password, 10);
+  }
   const updatedUser = await User.findByIdAndUpdate(
     req.params.id,
     {
@@ -81,8 +86,8 @@ export const updateUser = async (req, res, next) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        userName: req.user.lastName,
-        password: bcrypt_js.hashSync(req.body.password, 10),
+        userName: req.body.userName,
+        password: hashedPassword,
         isDisabled: req.body.isDisabled,
         isAdmin: req.body.isAdmin,
       },

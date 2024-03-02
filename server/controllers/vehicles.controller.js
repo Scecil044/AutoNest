@@ -71,10 +71,20 @@ export const getVehicles = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.order === "asc" ? 1 : -1;
 
-    const vehicles = await Vehicle.find({
-      ...(req.query.brand && { brand: req.query.brand }),
-      ...(req.query.model && { model: req.query.model }),
+    // Split the comma-separated string into an array
+    const brandsArray = req.query.brand?.split(",") ?? [];
 
+    // Construct the MongoDB query
+    let vehicleBrands = Array.isArray(brandsArray)
+      ? {
+          $or: brandsArray.map((brand) => ({
+            brand: { $regex: brand.trim(), $options: "i" }, // Trim any whitespace around the brand
+          })),
+        }
+      : { brand: { $regex: req.query.brand.trim(), $options: "i" } };
+    const vehicles = await Vehicle.find({
+      ...(req.query.brand && vehicleBrands),
+      ...(req.query.model && { model: req.query.model }),
       ...(req.query.color && { color: req.query.color }),
       ...(req.query.slug && { slug: req.query.slug }),
       ...(req.query.searchTerm && {
@@ -83,9 +93,13 @@ export const getVehicles = async (req, res, next) => {
           { model: { $regex: req.query.searchTerm, $options: "i" } },
           { color: { $regex: req.query.searchTerm, $options: "i" } },
           { slug: { $regex: req.query.searchTerm, $options: "i" } },
+          {
+            registrationNumber: { $regex: req.query.searchTerm, $options: "i" },
+          },
         ],
       }),
     })
+      .populate("userRef")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
@@ -206,8 +220,8 @@ export const deleteVehicle = async (req, res, next) => {
           "Forbidden. You have no rights to complete this action"
         )
       );
-    await Vehicle.findByIdAndDelete(req.params.id);
-    res.status(200).json("Vehicle deletion successful");
+    const deletedVehicle = await Vehicle.findByIdAndDelete(req.params.id);
+    res.status(200).json(deletedVehicle._id);
   } catch (error) {
     next(error);
   }
