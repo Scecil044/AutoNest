@@ -4,12 +4,14 @@ import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../components/common/DeleteModal";
 import { toast } from "react-toastify";
+import CreateVehicleModal from "../../components/CreateVehicleModal";
 
 export default function Vehicles() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [cars, setCars] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   const [vehicleId, setVehicleId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showMore, setShowMore] = useState(true);
@@ -87,7 +89,10 @@ export default function Vehicles() {
           <p className="text-popsicle">vehicles</p>
         </span>
         <div className="flex items-center justify-between m-2">
-          <button className="py-2 px-4 bg-[#212121] text-white shadow-md hover:shadow-none transition-all duration-100 hover:opacity-90 rounded">
+          <button
+            onClick={() => setOpenCreateModal(true)}
+            className="py-2 px-4 bg-[#212121] text-white shadow-md hover:shadow-none transition-all duration-100 hover:opacity-90 rounded"
+          >
             Add New
           </button>
           <input
@@ -192,6 +197,12 @@ export default function Vehicles() {
           vehicleId={vehicleId}
           openModal={openModal}
           setOpenModal={setOpenModal}
+        />
+      )}
+      {openCreateModal && (
+        <CreateVehicleModal
+          openCreateModal={openCreateModal}
+          setOpenCreateModal={setOpenCreateModal}
         />
       )}
     </div>
