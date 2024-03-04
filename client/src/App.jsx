@@ -21,6 +21,7 @@ import Support from "./pages/Support";
 import Vehicles from "./pages/admin/Vehicles";
 import Companies from "./pages/admin/Companies";
 import GuestLayout from "./components/GuestLayout";
+import ViewCompany from "./pages/admin/ViewCompany";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/users" element={<Users />} />
             <Route path="/vehicles" element={<Vehicles />} />
             <Route path="/companies" element={<Companies />} />
+            <Route path="/view/company/:companyId" element={<ViewCompany />} />
           </Route>
 
           <Route path="" element={<GuestLayout />}>

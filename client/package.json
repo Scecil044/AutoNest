@@ -12,7 +12,12 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.1.0",
     "@ckeditor/ckeditor5-react": "^6.2.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@heroicons/react": "^2.1.1",
+    "@mui/icons-material": "^5.15.11",
+    "@mui/material": "^5.15.11",
+    "@mui/x-charts": "^6.19.5",
     "@reduxjs/toolkit": "^2.2.1",
     "firebase": "^10.6.0",
     "flowbite-react": "^0.7.2",
