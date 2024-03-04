@@ -34,7 +34,7 @@ export default function CreateVehicleModal({
   // State for selected brand and models
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
 
@@ -90,6 +90,7 @@ export default function CreateVehicleModal({
     e.preventDefault();
     setUploadLoading(true);
     setUploadError(false);
+    setUploadProgress(true);
     if (files.length > 0 && files.length + formData.imageURLS.length < 10) {
       const promises = [];
       for (let i = 0; i < files.length; i++) {
@@ -103,9 +104,11 @@ export default function CreateVehicleModal({
           });
           setUploadError(false);
           setUploadLoading(false);
+          setUploadProgress(false);
         })
         .catch((error) => {
           setUploadLoading(false);
+          setUploadProgress(false);
           setUploadError(
             "image size selected must not exceed 4mb of storage size!"
           );
@@ -114,7 +117,7 @@ export default function CreateVehicleModal({
       setUploadError("You can not upload more than 10 images");
     }
   };
-//   console.log(formData);
+  //   console.log(formData);
   const uploadImages = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -126,7 +129,6 @@ export default function CreateVehicleModal({
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress.toFixed(0));
         },
         (error) => {
           reject(error);
@@ -220,8 +222,8 @@ export default function CreateVehicleModal({
     } else {
       setDescriptionTextError(false);
     }
-
   };
+  console.log(uploadProgress);
   return (
     <div className="h-full fixed inset-0 w-full bg-black/50 flex items-center justify-center">
       <form
@@ -442,6 +444,11 @@ export default function CreateVehicleModal({
         </div>
         {/* images */}
         <div className="upload mb-3">
+          {uploadProgress && (
+            <div className="w-[52%]">
+              <p className={`text-center text-red-500`}>Uploading...</p>
+            </div>
+          )}
           <div className="flex gap-5">
             <div className="flex  items-start">
               <input
@@ -454,10 +461,10 @@ export default function CreateVehicleModal({
               <button
                 onClick={handleImages}
                 type="button"
-                className="flex items-center gap-1 bg-[#212121] text-white  py-2 px-3 hover:px-4 border-2 shadow-md hover:bg-popsicle transition-all duration-300 rounded hover:border-none hover:shadow-sm hover:scale-105"
+                disabled={uploadProgress}
+                className={`flex items-center gap-1 bg-[#212121] text-white  py-2 px-3 hover:px-4 border-2 shadow-md hover:bg-popsicle transition-all duration-300 rounded hover:border-none hover:shadow-sm hover:scale-105 disabled:cursor-not-allowed`}
               >
-                Upload
-                <FaArrowRightLong className="w-5 group-hover:rotate-90 transition-all duration-300 text-white" />
+                {uploadProgress ? "Please wait.." : "Upload"}
               </button>
             </div>
             <div className="">
