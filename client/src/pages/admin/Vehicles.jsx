@@ -44,7 +44,7 @@ export default function Vehicles() {
       }
     };
     fetchVehicles();
-  }, [openModal]);
+  }, [openModal, openCreateModal]);
 
   const handleShowMore = async () => {
     const startIndex = cars.length;
@@ -83,7 +83,7 @@ export default function Vehicles() {
 
   return (
     <div className="min-h-screen font-lato">
-      <div className="p-5 bg-white border-gray-300 shadow-lg">
+      <div className="p-5 bg-white border-gray-300 shadow-lg overflow-x-auto table-auto">
         <span className="flex gap-1">
           Showing {cars.length} of {totalVehicleCount}
           <p className="text-popsicle">vehicles</p>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
 import { colors } from "../data";
 import { fuelType } from "../data";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -11,6 +10,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { toast } from "react-toastify";
 
 export default function CreateVehicleModal({
   setOpenCreateModal,
@@ -19,7 +19,8 @@ export default function CreateVehicleModal({
   const [formData, setFormData] = useState({
     brand: "",
     model: "",
-    imageURLS: [],
+    images: [],
+    mileage: "",
     registrationNumber: "",
     year: "",
     cubicCapacity: "",
@@ -28,6 +29,7 @@ export default function CreateVehicleModal({
       text: "",
       paint: false,
       sunRoof: false,
+      fuelType: "",
     },
   });
   const [files, setFiles] = useState([]);
@@ -37,6 +39,8 @@ export default function CreateVehicleModal({
   const [uploadProgress, setUploadProgress] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   // Possible errors
   const [brandError, setBrandError] = useState(false);
@@ -47,6 +51,7 @@ export default function CreateVehicleModal({
   const [descriptionTextError, setDescriptionTextError] = useState(false);
   const [capacityError, setCapacityError] = useState(false);
   const [registrationNumberError, setRegistrationNumberError] = useState(false);
+  const [mileageError, setMileageError] = useState(false);
   // Map of brands and their corresponding models
   const brandModelsMap = {
     Toyota: [
@@ -68,6 +73,7 @@ export default function CreateVehicleModal({
     Ford: ["Ranger", "Escape", "Fussion"],
     Volkswagen: ["Tuguan", "Tuareg", "Atlas", "Passat"],
     Mazda: ["Axela", "Atenza", "CX5", "CX3"],
+    Subaru: ["Forester", "Legacy", "Levrog", "WRX"],
     // Add more brands and models as needed
   };
   // Handle change in brand selection
@@ -91,7 +97,7 @@ export default function CreateVehicleModal({
     setUploadLoading(true);
     setUploadError(false);
     setUploadProgress(true);
-    if (files.length > 0 && files.length + formData.imageURLS.length < 10) {
+    if (files.length > 0 && files.length + formData.images.length < 10) {
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(uploadImages(files[i]));
@@ -100,7 +106,7 @@ export default function CreateVehicleModal({
         .then((urls) => {
           setFormData({
             ...formData,
-            imageURLS: formData.imageURLS.concat(urls),
+            images: formData.images.concat(urls),
           });
           setUploadError(false);
           setUploadLoading(false);
@@ -115,6 +121,8 @@ export default function CreateVehicleModal({
         });
     } else {
       setUploadError("You can not upload more than 10 images");
+      setUploadProgress(false);
+      setUploadLoading(false);
     }
   };
   //   console.log(formData);
@@ -151,6 +159,9 @@ export default function CreateVehicleModal({
     if (e.target.name === "cubicCapacity") {
       setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) });
     }
+    if (e.target.name === "mileage") {
+      setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) });
+    }
     if (e.target.name === "color") {
       setFormData({ ...formData, [e.target.id]: e.target.value });
     }
@@ -163,7 +174,7 @@ export default function CreateVehicleModal({
     if (e.target.name === "fuelType") {
       setFormData({
         ...formData,
-        description: { ...formData.description, fuelTyp: e.target.value },
+        description: { ...formData.description, fuelType: e.target.value },
       });
     }
     if (e.target.name === "sunRoof") {
@@ -180,6 +191,7 @@ export default function CreateVehicleModal({
       description: { ...formData.description, text: data },
     });
   };
+
   const handleCreateVehicle = async (e) => {
     e.preventDefault();
     if (!formData.brand || formData.brand === "") {
@@ -207,7 +219,10 @@ export default function CreateVehicleModal({
     } else {
       setColorError(false);
     }
-    if (!formData.fuelTyp || formData.fuelTyp === "") {
+    if (
+      !formData.description.fuelType ||
+      formData.description.fuelType === ""
+    ) {
       setFuelTypeError("The fuel type field is required");
     } else {
       setFuelTypeError(false);
@@ -222,13 +237,55 @@ export default function CreateVehicleModal({
     } else {
       setDescriptionTextError(false);
     }
+    if (!formData.mileage || formData.mileage === "") {
+      setMileageError("The mileage field is required");
+    } else {
+      setMileageError(false);
+    }
+    try {
+      setLoading(true);
+      setSaveError(false);
+      const res = await fetch("/api/vehicles/create/vehicle", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (data.success === false) {
+        setLoading(false);
+        setSaveError(data.message);
+        toast(saveError, {
+          type: "error",
+          theme: "colored",
+        });
+        return;
+      }
+      if (res.ok) {
+        setLoading(false);
+        setSaveError(false);
+        setOpenCreateModal(false);
+        toast("Vehicle created successfully", {
+          type: "success",
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      setLoading(false);
+      toast(error.message, {
+        type: "error",
+        theme: "colored",
+      });
+    }
   };
-  console.log(uploadProgress);
+
   return (
     <div className="h-full fixed inset-0 w-full bg-black/50 flex items-center justify-center">
       <form
         onSubmit={handleCreateVehicle}
-        className="bg-white p-5 w-[80%] sm:w-[70%] md:w-[60%] shadow-md border-2 border-gray-300 rounded font-lato"
+        className="bg-white p-5 w-[90%] sm:w-[80%] md:w-[60%] shadow-md border-2 border-gray-300 rounded font-lato overflow-y-auto"
       >
         {/* header */}
         <h1 className="font-semibold text-lg text-darkGreen">Create Vehicle</h1>
@@ -249,6 +306,7 @@ export default function CreateVehicleModal({
               <option value="Mercedes">Mercedes</option>
               <option value="Toyota">Toyota</option>
               <option value="Volkswagen">Volkswagen</option>
+              <option value="Subaru">Subaru</option>
             </select>
             {brandError && <small className="text-red-700">{brandError}</small>}
           </div>
@@ -294,6 +352,31 @@ export default function CreateVehicleModal({
               <option value={2024}>2024</option>
             </select>
             {yearError && <small className="text-red-700">{yearError}</small>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Mileage(kilometers</label>
+            <select
+              id="mileage"
+              name="mileage"
+              className="focus:outline-none focus:ring-0 py-1 p-2"
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+              <option value={0}>0</option>
+              <option value={10000}>10000</option>
+              <option value={20000}>20000</option>
+              <option value={30000}>30000</option>
+              <option value={40000}>40000</option>
+              <option value={50000}>50000</option>
+              <option value={60000}>60000</option>
+              <option value={70000}>70000</option>
+              <option value={80000}>80000</option>
+              <option value={100000}>100000</option>
+            </select>
+            {mileageError && (
+              <small className="text-red-700">{mileageError}</small>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -449,6 +532,8 @@ export default function CreateVehicleModal({
               <p className={`text-center text-red-500`}>Uploading...</p>
             </div>
           )}
+          {uploadError &&
+            toast(uploadError, { type: "error", theme: "colored" })}
           <div className="flex gap-5">
             <div className="flex  items-start">
               <input
@@ -470,7 +555,7 @@ export default function CreateVehicleModal({
             <div className="">
               {!uploadError && (
                 <div className="flex flex-wrap gap-2">
-                  {formData.imageURLS.map((pic, index) => (
+                  {formData.images.map((pic, index) => (
                     <img
                       key={index}
                       src={pic}
@@ -494,7 +579,9 @@ export default function CreateVehicleModal({
           <button
             className={`py-1 px-4 bg-darkGreen text-white flex items-center gap-1 disabled:cursor-not-allowed`}
           >
-            <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>
+            {loading && (
+              <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>
+            )}
             Submit
           </button>
         </div>
