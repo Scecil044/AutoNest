@@ -1,13 +1,52 @@
 import { useState } from "react";
+import { FaArrowRightLong } from "react-icons/fa6";
+import { colors } from "../data";
+import { fuelType } from "../data";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
 
 export default function CreateVehicleModal({
   setOpenCreateModal,
   openCreateModal,
 }) {
+  const [formData, setFormData] = useState({
+    brand: "",
+    model: "",
+    imageURLS: [],
+    registrationNumber: "",
+    year: "",
+    cubicCapacity: "",
+    color: "",
+    description: {
+      text: "",
+      paint: false,
+      sunRoof: false,
+    },
+  });
+  const [files, setFiles] = useState([]);
   // State for selected brand and models
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(null);
+  const [uploadError, setUploadError] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
+  // Possible errors
+  const [brandError, setBrandError] = useState(false);
+  const [modelError, setModelError] = useState(false);
+  const [colorError, setColorError] = useState(false);
+  const [yearError, setYearError] = useState(false);
+  const [fuelTypeError, setFuelTypeError] = useState(false);
+  const [descriptionTextError, setDescriptionTextError] = useState(false);
+  const [capacityError, setCapacityError] = useState(false);
+  const [registrationNumberError, setRegistrationNumberError] = useState(false);
   // Map of brands and their corresponding models
   const brandModelsMap = {
     Toyota: [
@@ -37,16 +76,158 @@ export default function CreateVehicleModal({
     setSelectedBrand(brand);
     // Reset selected model when brand changes
     setSelectedModel("");
+    setFormData({ ...formData, brand: brand });
   };
 
   // Handle change in model selection
   const handleModelChange = (e) => {
     const model = e.target.value;
     setSelectedModel(model);
+    setFormData({ ...formData, model: model });
+  };
+
+  const handleImages = (e) => {
+    e.preventDefault();
+    setUploadLoading(true);
+    setUploadError(false);
+    if (files.length > 0 && files.length + formData.imageURLS.length < 10) {
+      const promises = [];
+      for (let i = 0; i < files.length; i++) {
+        promises.push(uploadImages(files[i]));
+      }
+      Promise.all(promises)
+        .then((urls) => {
+          setFormData({
+            ...formData,
+            imageURLS: formData.imageURLS.concat(urls),
+          });
+          setUploadError(false);
+          setUploadLoading(false);
+        })
+        .catch((error) => {
+          setUploadLoading(false);
+          setUploadError(
+            "image size selected must not exceed 4mb of storage size!"
+          );
+        });
+    } else {
+      setUploadError("You can not upload more than 10 images");
+    }
+  };
+//   console.log(formData);
+  const uploadImages = async (file) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress.toFixed(0));
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
+  const handleChange = (e) => {
+    if (e.target.name === "registrationNumber") {
+      setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+    }
+    if (e.target.name === "year") {
+      setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) });
+    }
+    if (e.target.name === "cubicCapacity") {
+      setFormData({ ...formData, [e.target.id]: parseInt(e.target.value) });
+    }
+    if (e.target.name === "color") {
+      setFormData({ ...formData, [e.target.id]: e.target.value });
+    }
+    if (e.target.name === "paint") {
+      setFormData({
+        ...formData,
+        description: { ...formData.description, paint: e.target.checked },
+      });
+    }
+    if (e.target.name === "fuelType") {
+      setFormData({
+        ...formData,
+        description: { ...formData.description, fuelTyp: e.target.value },
+      });
+    }
+    if (e.target.name === "sunRoof") {
+      setFormData({
+        ...formData,
+        description: { ...formData.description, sunRoof: e.target.checked },
+      });
+    }
+  };
+  const handleEditor = (e, editor) => {
+    const data = editor.getData();
+    setFormData({
+      ...formData,
+      description: { ...formData.description, text: data },
+    });
+  };
+  const handleCreateVehicle = async (e) => {
+    e.preventDefault();
+    if (!formData.brand || formData.brand === "") {
+      setBrandError("The brand field is required");
+    } else {
+      setBrandError(false);
+    }
+    if (!formData.model || formData.model === "") {
+      setModelError("The model field is required");
+    } else {
+      setModelError(false);
+    }
+    if (!formData.year || formData.year === "") {
+      setYearError("The year field is required");
+    } else {
+      setYearError(false);
+    }
+    if (!formData.cubicCapacity || formData.cubicCapacity === "") {
+      setCapacityError("The Engine Capacity field is required");
+    } else {
+      setCapacityError(false);
+    }
+    if (!formData.color || formData.color === "") {
+      setColorError("The color field is required");
+    } else {
+      setColorError(false);
+    }
+    if (!formData.fuelTyp || formData.fuelTyp === "") {
+      setFuelTypeError("The fuel type field is required");
+    } else {
+      setFuelTypeError(false);
+    }
+    if (!formData.registrationNumber || formData.registrationNumber === "") {
+      setRegistrationNumberError("The registration number field is required");
+    } else {
+      setRegistrationNumberError(false);
+    }
+    if (!formData.description.text || formData.description.text === "") {
+      setDescriptionTextError("Add some description text field is required");
+    } else {
+      setDescriptionTextError(false);
+    }
+
   };
   return (
     <div className="h-full fixed inset-0 w-full bg-black/50 flex items-center justify-center">
-      <div className="bg-white p-5 w-[80%] sm:w-[70%] md:w-[60%] shadow-md border-2 border-gray-300 rounded font-lato">
+      <form
+        onSubmit={handleCreateVehicle}
+        className="bg-white p-5 w-[80%] sm:w-[70%] md:w-[60%] shadow-md border-2 border-gray-300 rounded font-lato"
+      >
         {/* header */}
         <h1 className="font-semibold text-lg text-darkGreen">Create Vehicle</h1>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-5 my-2">
@@ -67,7 +248,9 @@ export default function CreateVehicleModal({
               <option value="Toyota">Toyota</option>
               <option value="Volkswagen">Volkswagen</option>
             </select>
+            {brandError && <small className="text-red-700">{brandError}</small>}
           </div>
+
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold">Model</label>
             <select
@@ -75,7 +258,7 @@ export default function CreateVehicleModal({
               value={selectedModel}
               onChange={handleModelChange}
               disabled={!selectedBrand}
-              className={`focus:outline-none focus:ring-0 py-1 p-2 disabled:cursor-not-allowed`}
+              className={`focus:outline-none focus:ring-0 py-1 p-2 disabled:cursor-not-allowed disabled:bg-gray-100`}
             >
               <option value="">Select</option>
               {selectedBrand &&
@@ -85,13 +268,16 @@ export default function CreateVehicleModal({
                   </option>
                 ))}
             </select>
+            {modelError && <small className="text-red-700">{modelError}</small>}
           </div>
 
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold">Year</label>
             <select
               id="year"
+              name="year"
               className="focus:outline-none focus:ring-0 py-1 p-2"
+              onChange={handleChange}
             >
               <option value="">Select</option>
               <option value={2015}>2015</option>
@@ -105,6 +291,7 @@ export default function CreateVehicleModal({
               <option value={2023}>2023</option>
               <option value={2024}>2024</option>
             </select>
+            {yearError && <small className="text-red-700">{yearError}</small>}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -112,8 +299,10 @@ export default function CreateVehicleModal({
               Capacity (Cubic capacity)
             </label>
             <select
-              id="year"
+              id="cubicCapacity"
+              name="cubicCapacity"
               className="focus:outline-none focus:ring-0 py-1 p-2"
+              onChange={handleChange}
             >
               <option value="">Select</option>
               <option value={1000}>1000</option>
@@ -129,6 +318,162 @@ export default function CreateVehicleModal({
               <option value={5000}>5000</option>
               <option value={5500}>5500</option>
             </select>
+            {capacityError && (
+              <small className="text-red-700">{capacityError}</small>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Reg No</label>
+            <input
+              type="text"
+              placeholder="E.g KCN 333J"
+              id="registrationNumber"
+              name="registrationNumber"
+              className="focus:outline-none focus:ring-0 py-1 p-2"
+              onChange={handleChange}
+            />
+            {registrationNumberError && (
+              <small className="text-red-700">{registrationNumberError}</small>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Color</label>
+            <select
+              id="color"
+              name="color"
+              className="focus:outline-none focus:ring-0 py-1 p-2"
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+              {colors.map((color, index) => {
+                return (
+                  <option key={index} value={color}>
+                    {color}
+                  </option>
+                );
+              })}
+            </select>
+            {colorError && <small className="text-red-700">{colorError}</small>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Fuel Type</label>
+            <select
+              id="fuelType"
+              name="fuelType"
+              className="focus:outline-none focus:ring-0 py-1 p-2"
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+              {fuelType.map((item, index) => {
+                return (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                );
+              })}
+            </select>
+            {fuelTypeError && (
+              <small className="text-red-700">{fuelTypeError}</small>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Paint</label>
+            <div className="flex gap-5 mt-1">
+              <div className="flex items-center gap-3">
+                <span>Original Paint</span>
+                <input
+                  type="checkbox"
+                  id="paint"
+                  name="paint"
+                  className="h-5 w-5"
+                  checked={
+                    formData.description.paint === true ||
+                    formData.paint === "true"
+                  }
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">SunRoof</label>
+            <div className="flex gap-5 mt-1">
+              <div className="flex items-center gap-3">
+                <span>Sun Roof</span>
+                <input
+                  type="checkbox"
+                  id="sunRoof"
+                  name="sunRoof"
+                  className="h-5 w-5"
+                  checked={
+                    formData.description.sunRoof === true ||
+                    formData.paint === "true"
+                  }
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* editor */}
+        <div className="editor my-3">
+          <CKEditor
+            editor={ClassicEditor}
+            id="text"
+            data={formData?.description.text || "Enter description text"}
+            onReady={(editor) => {}}
+            onChange={(event, editor) => {
+              handleEditor(event, editor);
+            }}
+            onBlur={(event, editor) => {
+              console.log("Blur.", editor);
+            }}
+            onFocus={(event, editor) => {
+              console.log("Focus.", editor);
+            }}
+          />
+          {descriptionTextError && (
+            <small className="text-red-700">{descriptionTextError}</small>
+          )}
+        </div>
+        {/* images */}
+        <div className="upload mb-3">
+          <div className="flex gap-5">
+            <div className="flex  items-start">
+              <input
+                type="file"
+                id="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => setFiles(e.target.files)}
+              />
+              <button
+                onClick={handleImages}
+                type="button"
+                className="flex items-center gap-1 bg-[#212121] text-white  py-2 px-3 hover:px-4 border-2 shadow-md hover:bg-popsicle transition-all duration-300 rounded hover:border-none hover:shadow-sm hover:scale-105"
+              >
+                Upload
+                <FaArrowRightLong className="w-5 group-hover:rotate-90 transition-all duration-300 text-white" />
+              </button>
+            </div>
+            <div className="">
+              {!uploadError && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.imageURLS.map((pic, index) => (
+                    <img
+                      key={index}
+                      src={pic}
+                      alt="pic"
+                      className="h-20 w-20 object-cover"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         {/* footer */}
@@ -146,7 +491,7 @@ export default function CreateVehicleModal({
             Submit
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

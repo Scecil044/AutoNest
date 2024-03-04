@@ -176,4 +176,14 @@ let adminLinks = [
     link: "/companies",
   },
 ];
-export { footerVehicleLinks, companyInfo, systemUsers, adminLinks };
+
+const colors = ["white", "black", "blue", "red", "silver", "grey"];
+const fuelType = ["super", "diesel", "petrol"];
+export {
+  footerVehicleLinks,
+  companyInfo,
+  colors,
+  systemUsers,
+  adminLinks,
+  fuelType,
+};
