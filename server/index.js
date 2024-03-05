@@ -9,6 +9,7 @@ import path from "path";
 import vehicleRoutes from "./routes/vehicle.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import companyRoutes from "./routes/company.route.js";
 
 dotenv.config();
 connectDb();
@@ -26,6 +27,7 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/companies", companyRoutes);
 
 // Deployment configurations
 app.use(express.static(path.join(__dirname, "client/dist")));

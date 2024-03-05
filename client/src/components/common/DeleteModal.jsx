@@ -3,19 +3,14 @@ import { IoIosWarning } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import {
-  deleteVehicleFulfilledState,
-  fetchVehiclesFulfilledState,
-  fetchVehiclesPendingState,
-  fetchVehiclesRejectedState,
-} from "../../firebase/vehiclesSlice";
 
 export default function DeleteModal({
   role,
   openModal,
   setOpenModal,
   userId,
-  vehicleToDelete,
+  vehicleId,
+  companyId,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,27 +20,23 @@ export default function DeleteModal({
   // function to delete vehicle
   const deleteVehicle = async () => {
     try {
-      dispatch(fetchVehiclesPendingState());
-      const res = await fetch(
-        `/api/vehicles/delete/vehicle/${vehicleToDelete}`,
-        {
-          method: "DELETE",
-        }
-      );
+      setIsLoading(true);
+      setIsError(false);
+      const res = await fetch(`/api/vehicles/delete/vehicle/${vehicleId}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(fetchVehiclesRejectedState(data.message));
+        toast(data.message, { type: "error", theme: "dark" });
         setIsLoading(false);
         setIsError(false);
         return;
       }
       setOpenModal(false);
       setIsLoading(false);
-      dispatch(deleteVehicleFulfilledState(data));
       setIsError(false);
-      navigate("/vehicles");
+      toast("vehicle deleted successfully", { type: "success", theme: "dark" });
     } catch (error) {
-      dispatch(fetchVehiclesRejectedState(error.message));
       setIsError(error.message);
       setIsLoading(false);
     }
@@ -78,6 +69,30 @@ export default function DeleteModal({
       setIsLoading(false);
     }
   };
+  // function to delete company
+  const deleteCompany = async () => {
+    try {
+      setIsLoading(true);
+      setIsError(false);
+      const res = await fetch(`/api/companies/delete/company/${companyId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setIsLoading(false);
+        setIsError(false);
+        toast(data.message, { type: "error", theme: "dark" });
+        return;
+      }
+      setOpenModal(false);
+      setIsLoading(false);
+      setIsError(false);
+      toast(data, { type: "success", theme: "dark" });
+    } catch (error) {
+      setIsError(error.message);
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="h-full flex items-center justify-center inset-0 fixed bg-black/50">
       <div className="shadow-lg pt-5 pb-2 px-5 w-[80%] md:w-[30%] border border-gray-300 bg-white">
@@ -98,6 +113,16 @@ export default function DeleteModal({
               </p>
               <p className="text-sm">
                 All related records will be cleared from the database!
+              </p>
+            </div>
+          ) : role === "deleteCompany" ? (
+            <div className="border-l-4 border-red-400 px-1">
+              <p className="font-semibold">
+                Proceed to delete selected Company?
+              </p>
+              <p className="text-sm">
+                All related records, and relationships will be cleared from the
+                database!
               </p>
             </div>
           ) : (
@@ -131,6 +156,18 @@ export default function DeleteModal({
               disabled={isLoading}
               className={`py-1 px-4 bg-red-700 text-white flex items-center gap-1 disabled:cursor-not-allowed`}
               onClick={deleteVehicle}
+            >
+              {isLoading && (
+                <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>
+              )}
+              Delete
+            </button>
+          )}
+          {role === "deleteCompany" && (
+            <button
+              disabled={isLoading}
+              className={`py-1 px-4 bg-red-700 text-white flex items-center gap-1 disabled:cursor-not-allowed`}
+              onClick={deleteCompany}
             >
               {isLoading && (
                 <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>

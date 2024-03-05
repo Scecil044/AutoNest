@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
+import DeleteModal from "../../components/common/DeleteModal";
 
 export default function Companies() {
   const [companies, setCompanies] = useState([]);
@@ -9,6 +10,8 @@ export default function Companies() {
   const [error, setError] = useState(false);
   const [companiesCount, setCompaniesCount] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
 
   useEffect(() => {
     //fetch companies from database
@@ -34,7 +37,7 @@ export default function Companies() {
       }
     };
     fetchCompanies();
-  }, []);
+  }, [openModal]);
   const filteredCompanies = companies.filter((company) =>
     company.companyName.toLowerCase().includes(searchTerm.toLowerCase().trim())
   );
@@ -106,7 +109,13 @@ export default function Companies() {
                         <FaEdit className="text-blue-500 h-5 w-5" />
                         Edit
                       </Link>
-                      <button className="py-1 px-1 hover:opacity-90 shadow-sm hover:shadow-none transition-all duration-100 flex items-center gap-2 hover:bg-blue-100 hover:scale-105">
+                      <button
+                        onClick={() => {
+                          setOpenModal(true);
+                          setCompanyId(company._id);
+                        }}
+                        className="py-1 px-1 hover:opacity-90 shadow-sm hover:shadow-none transition-all duration-100 flex items-center gap-2 hover:bg-blue-100 hover:scale-105"
+                      >
                         <MdDelete className="text-red-500 h-5 w-5" />
                         Delete
                       </button>
@@ -117,6 +126,14 @@ export default function Companies() {
           )}
         </table>
       </div>
+      {openModal && (
+        <DeleteModal
+          role="deleteCompany"
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          companyId={companyId}
+        />
+      )}
     </div>
   );
 }

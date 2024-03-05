@@ -2,7 +2,7 @@ import { IoCarSportOutline } from "react-icons/io5";
 import { FaFlagCheckered } from "react-icons/fa";
 import { IoBarChartSharp } from "react-icons/io5";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const chartSetting = {
@@ -106,11 +106,13 @@ export default function ViewCompany() {
   const [company, setCompany] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [users, setUsers] = useState([]);
   const params = useParams();
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     //fetch companies from database
-    const fetchCompanies = async () => {
+    const fetchCompany = async () => {
       try {
         setLoading(true);
         setError(false);
@@ -132,20 +134,49 @@ export default function ViewCompany() {
         setError(error.message);
       }
     };
-    fetchCompanies();
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        const res = await fetch("/api/users/get/users");
+        const data = await res.json();
+        if (data.success === false) {
+          setError(data.message);
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+        setError(false);
+        setUsers(data);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+    fetchCompany();
   }, []);
 
+  const updateCompany = async (e) => {
+    e.preventDefault();
+  };
+  // filter through users
+  const filteredUsers = users.filter(
+    (user) => user.userName !== company[0]?.userRef.userName
+  );
+
+  const handleChange = (e) => {};
   return (
     <div className="min-h-screen font-lato">
-      <div className="p-5 bg-white border-gray-300 shadow-lg">
-        <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-start">
-          <div className="md:w-[300px] w-full shadow-md p-5 border-gray-300 border-2">
+      <div className="flex flex-col md:flex-row gap-5 md:gap-3 items-start">
+        <div className="md:w-[400px] w-full flex flex-col gap-3">
+          <div className="shadow-md p-5 bg-white border-gray-300 border-2 hover:scale-105 transition-all duration-300 cursor-pointer">
             <h2 className="text-xl font-bold">Overview</h2>
             <span className="flex items-center gap-1">
-              <h2 className="font-semibold text-md text-nowrap">
+              <h2 className="font-semibold text-md text-ellipsis">
                 Company Name:
               </h2>
-              <h1 className="text-md  text-darkGreen text-nowrap">
+              <h1 className="text-md  text-darkGreen">
                 {company[0]?.companyName}
               </h1>
             </span>
@@ -173,85 +204,154 @@ export default function ViewCompany() {
               </h1>
             </span>
           </div>
-          <div className="flex-1 shadow-md p-5 border-gray-300 border-2 items-start overflow-x-auto">
-            <div className="flex flex-col md:flex-row md:gap-5 gap-3">
-              <div className="flex-1 shadow-md p-2 border-gray-200 border-2 items-start">
-                <div className="border-l-4 border-pink-600 p-5 flex">
-                  <div className="flex-1 flex-col">
-                    <IoCarSportOutline className="md:w-8 md:h-8 w-10 h-10 ml-5" />
-                    <p>Listed cars</p>
-                  </div>
-                  <div className="flex-1 border-l-4">
-                    <h1 className="text-center font-bold text-3xl">234</h1>
-                  </div>
-                </div>
+
+          <div className="shadow-md p-5 bg-white border-gray-300 border-2 hover:scale-105 transition-all duration-300 cursor-pointer">
+            <form onSubmit={updateCompany} className="flex flex-col gap-2">
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold">Owned By:</label>
+                <select
+                  name="owner"
+                  id="owner"
+                  className="py-1 px-2 focus:outline-none border-gray-400 focus:ring-0"
+                >
+                  <option value="">
+                    {company[0]?.userRef.firstName +
+                      " " +
+                      company[0]?.userRef.lastName}
+                  </option>
+                  {filteredUsers.map((user, index) => (
+                    <option key={index}>
+                      {user.firstName + " " + user.lastName}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="flex-1 shadow-md p-2 border-gray-200 border-2 items-start">
-                <div className="border-l-4 border-pink-600 p-5 flex">
-                  <div className="flex-1 flex-col">
-                    <FaFlagCheckered className="md:w-8 md:h-8 w-10 h-10 ml-5" />
-                    <p>Flagged</p>
-                  </div>
-                  <div className="flex-1 border-l-4">
-                    <h1 className="text-center font-bold text-3xl">116</h1>
-                  </div>
-                </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold">Company Name</label>
+                <input
+                  type="text"
+                  placeholder="Company Name"
+                  name="companyName"
+                  id="companyName"
+                  defaultValue={company[0]?.companyName}
+                  onChange={handleChange}
+                  className="py-1 px-2 border-gray-400 focus:outline-none focus:ring-0 focus:bg-blue-50"
+                />
               </div>
-              <div className="flex-1 shadow-md p-2 border-gray-200 border-2 items-start">
-                <div className="border-l-4 border-pink-600 p-5 flex">
-                  <div className="flex-1 flex-col">
-                    <IoBarChartSharp className="md:w-8 md:h-8 w-10 h-10 ml-5" />
-                    <p>Sales Closed</p>
-                  </div>
-                  <div className="flex-1 border-l-4">
-                    <h1 className="text-center font-bold text-3xl">11</h1>
-                  </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold">City</label>
+                <input
+                  type="text"
+                  placeholder="City"
+                  name="city"
+                  id="city"
+                  defaultValue={company[0]?.city}
+                  onChange={handleChange}
+                  className="py-1 px-2 border-gray-400 focus:outline-none focus:ring-0 focus:bg-blue-50"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold">Country</label>
+                <input
+                  type="text"
+                  disabled
+                  placeholder="Country"
+                  name="country"
+                  id="country"
+                  defaultValue={company[0]?.country}
+                  onChange={handleChange}
+                  className="py-1 px-2 border-gray-400 focus:outline-none focus:ring-0 focus:bg-blue-50"
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className="flex-1 bg-white shadow-md p-5 border-gray-300 border-2 items-start overflow-x-auto hover:scale-105 transition-all duration-300">
+          <div className="flex flex-col md:flex-row md:gap-5 gap-3">
+            <div className="flex-1 shadow-md p-2 border-gray-200 border-2 items-start">
+              <div className="border-l-4 border-pink-600 p-5 flex">
+                <div className="flex-1 flex-col">
+                  <IoCarSportOutline className="md:w-8 md:h-8 w-10 h-10 ml-5" />
+                  <p>Listed cars</p>
+                </div>
+                <div className="flex-1 border-l-4">
+                  <h1 className="text-center font-bold text-3xl">234</h1>
                 </div>
               </div>
             </div>
-            <button className="py-2 px-4 shadow-md rounded">Inventory</button>
-            <div className="my-5">
-              <div className="logo flex gap-5">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Ford_logo_flat.svg/2560px-Ford_logo_flat.svg.png"
-                  alt="logo"
-                  className="object-cover h-16 w-16 rounded-full"
-                />
-                <div>
-                  <p className="text-sm">
-                    Ford Motors was founded by Henry Ford and incorporated on
-                    June 16, 1903. The company sells automobiles and commercial
-                    vehicles under the Ford brand, and luxury cars under its
-                    Lincoln brand. Ford also owns a 32% stake in China's
-                    Jiangling Motors.
-                  </p>
+            <div className="flex-1 shadow-md p-2 border-gray-200 border-2 items-start">
+              <div className="border-l-4 border-pink-600 p-5 flex">
+                <div className="flex-1 flex-col">
+                  <FaFlagCheckered className="md:w-8 md:h-8 w-10 h-10 ml-5" />
+                  <p>Flagged</p>
+                </div>
+                <div className="flex-1 border-l-4">
+                  <h1 className="text-center font-bold text-3xl">116</h1>
                 </div>
               </div>
+            </div>
+            <div className="flex-1 shadow-md p-2 border-gray-200 border-2 items-start">
+              <div className="border-l-4 border-pink-600 p-5 flex">
+                <div className="flex-1 flex-col">
+                  <IoBarChartSharp className="md:w-8 md:h-8 w-10 h-10 ml-5" />
+                  <p>Sales Closed</p>
+                </div>
+                <div className="flex-1 border-l-4">
+                  <h1 className="text-center font-bold text-3xl">11</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+          <Link
+            to={`/company/inventory/${params.companyId}`}
+            className="py-2 px-4 shadow-md rounded"
+          >
+            Inventory
+          </Link>
+          <div className="my-5">
+            <div className="logo flex gap-5">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Ford_logo_flat.svg/2560px-Ford_logo_flat.svg.png"
+                alt="logo"
+                className="object-cover h-16 w-16 rounded-full"
+              />
+              <div>
+                <p className="text-sm">
+                  Ford Motors was founded by Henry Ford and incorporated on June
+                  16, 1903. The company sells automobiles and commercial
+                  vehicles under the Ford brand, and luxury cars under its
+                  Lincoln brand. Ford also owns a 32% stake in China's Jiangling
+                  Motors.
+                </p>
+              </div>
+            </div>
 
-              {/* graph */}
-              <div className="flex flex-col-reverse md:flex-row">
-                <div className="flex-1">
-                  <BarChart
-                    dataset={dataset}
-                    yAxis={[{ scaleType: "band", dataKey: "month" }]}
-                    series={[
-                      {
-                        dataKey: "seoul",
-                        label: "Seoul rainfall",
-                        valueFormatter,
-                      },
-                    ]}
-                    layout="horizontal"
-                    {...chartSetting}
-                  />
-                </div>
-                <div className="flex-1 hidden md:inline">
-                  <h1 className="font-semibold text-darkGreen">Description</h1>
-                  <p className="text-sm my-1 bg-blue-50 p-5">
-                    The plotted figures shows your interactions in terms of sale
-                    with this organization
-                  </p>
-                </div>
+            {/* graph */}
+            <div className="flex flex-col-reverse md:flex-row">
+              <div className="flex-1">
+                <BarChart
+                  dataset={dataset}
+                  yAxis={[{ scaleType: "band", dataKey: "month" }]}
+                  series={[
+                    {
+                      dataKey: "seoul",
+                      label: "Seoul rainfall",
+                      valueFormatter,
+                    },
+                  ]}
+                  layout="horizontal"
+                  {...chartSetting}
+                />
+              </div>
+              <div className="flex-1 hidden md:inline">
+                <h1 className="font-semibold text-darkGreen">Description</h1>
+                <p className="text-sm my-1 bg-blue-50 p-5">
+                  The plotted figures shows your interactions in terms of sale
+                  with this organization
+                </p>
               </div>
             </div>
           </div>

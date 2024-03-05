@@ -88,7 +88,7 @@ export default function Vehicles() {
           Showing {cars.length} of {totalVehicleCount}
           <p className="text-popsicle">vehicles</p>
         </span>
-        <div className="flex items-center justify-between m-2">
+        <div className="flex items-center justify-between mb-2">
           <button
             onClick={() => setOpenCreateModal(true)}
             className="py-2 px-4 bg-[#212121] text-white shadow-md hover:shadow-none transition-all duration-100 hover:opacity-90 rounded"
