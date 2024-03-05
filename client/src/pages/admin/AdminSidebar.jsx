@@ -7,7 +7,7 @@ import { MdBusiness } from "react-icons/md";
 
 export default function AdminSidebar() {
   return (
-    <div className="w-[80px] md:w-[180px] bg-[#212121] text-white h-full">
+    <div className="w-[80px] md:w-[180px] bg-pink-800 text-white h-full">
       <div>
         {adminLinks.map((item, index) => (
           <div key={index} className="flex flex-col gap-5">

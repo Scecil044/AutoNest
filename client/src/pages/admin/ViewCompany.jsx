@@ -3,11 +3,18 @@ import { FaFlagCheckered } from "react-icons/fa";
 import { IoBarChartSharp } from "react-icons/io5";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCountries } from "use-react-countries";
 import DashboardLoader from "../../components/common/DashboardLoader";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
 
 const chartSetting = {
   xAxis: [
@@ -115,9 +122,13 @@ export default function ViewCompany() {
   const [users, setUsers] = useState([]);
   const params = useParams();
   const [formData, setFormData] = useState({});
+  const [file, setFile] = useState(null);
   // states to update user
   const [updateLoader, setUpdateLoader] = useState(false);
   const [updateError, setUpdateError] = useState(false);
+  const fileRef = useRef();
+  const [fileUploadError, setFileUploadError] = useState(false);
+  const [fileUploadLoader, setFileUploadLoader] = useState(false);
 
   useEffect(() => {
     //fetch companies from database
@@ -162,6 +173,44 @@ export default function ViewCompany() {
         setLoading(false);
       }
     };
+
+    if (file) {
+      const uploadImage = async () => {
+        try {
+          setFileUploadLoader(true);
+          setFileUploadError(false);
+          const storage = getStorage(app);
+          const fileName = new Date().getTime() + file.name;
+          const storageRef = ref(storage, fileName);
+          const uploadTask = uploadBytesResumable(storageRef, file);
+
+          uploadTask.on(
+            "status_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log(progress.toFixed(0));
+            },
+            (err) => {
+              setFileUploadError(err);
+              setFileUploadLoader(false);
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                setFormData({ ...formData, companyLogo: downloadURL });
+                setFileUploadLoader(false);
+                setFileUploadError(false);
+              });
+            }
+          );
+        } catch (error) {
+          setFileUploadError(error.message);
+          setFileUploadLoader(false);
+        }
+      };
+      uploadImage();
+    }
+
     fetchUsers();
     fetchCompany();
   }, []);
@@ -172,6 +221,7 @@ export default function ViewCompany() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
+  // function to update company
   const updateCompany = async (e) => {
     e.preventDefault();
     try {
@@ -426,11 +476,20 @@ export default function ViewCompany() {
           <div className="my-5">
             <div className="logo flex gap-5">
               <img
-                src={company[0]?.companyLogo}
+                src={formData.companyLogo || company[0]?.companyLogo}
                 alt="logo"
-                className="object-cover h-16 w-16 rounded-full"
+                onClick={() => fileRef.current.click()}
+                className="object-cover h-16 w-16 rounded-full cursor-pointer"
               />
               <div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  id="companyLogo"
+                  ref={fileRef}
+                  onChange={(e) => setFile(e.target.files[0])}
+                />
                 <p className="text-sm">
                   Ford Motors was founded by Henry Ford and incorporated on June
                   16, 1903. The company sells automobiles and commercial

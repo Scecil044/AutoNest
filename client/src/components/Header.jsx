@@ -47,7 +47,7 @@ export default function Header() {
   }, [location.search]);
   return (
     <>
-      <header className="bg-darkGreen text-white pr-2 font-lato flex items-center justify-between relative">
+      <header className="bg-[#003566] text-white pr-2 font-lato flex items-center justify-between relative">
         <Link to="/" className="px-2 text-lg font-roboto font-bold">
           <span className="text-3xl text-nowrap">A</span>utoNestKe
         </Link>

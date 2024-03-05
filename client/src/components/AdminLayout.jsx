@@ -24,7 +24,7 @@ export default function AdminLayout() {
   return user && user.isAdmin ? (
     <>
       <div className="min-h-screen bg-pampas">
-        <header className="w-full bg-[#212121] text-white p-3 flex items-center justify-between shadow-md relative">
+        <header className="w-full bg-pink-800 text-white p-3 flex items-center justify-between shadow-md relative">
           header
           {/* avatar */}
           <div

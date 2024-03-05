@@ -10,7 +10,7 @@ const CompanySchema = new mongoose.Schema(
     bannerImage: {
       type: String,
       default:
-        "https://media.istockphoto.com/id/480652712/photo/dealer-new-cars-stock.jpg?s=612x612&w=0&k=20&c=Mzfb5oEeovQblEo160df-xFxfd6dGoLBkqjjDWQbd5E=",
+        "https://www.shutterstock.com/image-photo/cars-sale-stock-row-car-600nw-636632101.jpg",
     },
     city: {
       type: String,

@@ -4,6 +4,7 @@ import {
   createVehicle,
   deleteVehicle,
   fetchTopSpecModels,
+  getCompanyVehicles,
   getVehicles,
   popularVehicles,
   updateVehicle,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post("/create/vehicle", verifyToken, createVehicle);
 router.get("/get/vehicles", getVehicles);
+router.get("/get/company/vehicles", getCompanyVehicles);
 router.get("/get/popular/vehicles", popularVehicles);
 router.get("/get/top/spec/vehicles", fetchTopSpecModels);
 router.put("/update/vehicle/:id", verifyToken, updateVehicle);

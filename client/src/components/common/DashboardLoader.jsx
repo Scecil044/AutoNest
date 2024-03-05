@@ -4,7 +4,7 @@ waveform.register();
 
 export default function DashboardLoader({}) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black/50 inset-0 fixed">
+    <div className="min-h-screen flex items-center justify-center bg-black/50 inset-0 fixed z-50">
       <div>
         <l-waveform
           size="45"

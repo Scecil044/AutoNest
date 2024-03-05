@@ -6,7 +6,7 @@ import { FaCar, FaInfoCircle, FaHome, FaTools } from "react-icons/fa";
 
 export default function Sidebar() {
   return (
-    <div className=" hidden md:flex text-white bg-darkGreen min-h-screen w-[100px] text-sm font-lato">
+    <div className=" hidden md:flex text-white bg-[#003566] min-h-screen w-[100px] text-sm font-lato">
       <div className="flex flex-col gap-1">
         <Link
           to="/"
@@ -22,7 +22,10 @@ export default function Sidebar() {
           <FaCar className="h-7 w-7 text-gray-300" />
           Inventory
         </Link>
-        <Link className="flex flex-col items-center text-nowrap hover:bg-black/50 p-2">
+        <Link
+          to="/services"
+          className="flex flex-col items-center text-nowrap hover:bg-black/50 p-2"
+        >
           <FaTools className="h-7 w-7 text-gray-300" />
           Services
         </Link>

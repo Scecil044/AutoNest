@@ -99,7 +99,7 @@ export const getVehicles = async (req, res, next) => {
         ],
       }),
     })
-      .populate("userRef")
+      .populate("userRef", "firstName lastName userName email")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
@@ -110,6 +110,23 @@ export const getVehicles = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getCompanyVehicles = async (req, res, next) => {
+  const startIndex = parseInt(req.query.startIndex) || 0;
+  const limit = parseInt(req.query.limit) || 10;
+  const sortDirection = req.query.order === "asc" ? 1 : -1;
+
+  const vehicles = await Vehicle.find({ userRef: req.query.userId })
+    .sort({ createdAt: sortDirection })
+    .skip(startIndex)
+    .limit(limit);
+  const vehicleCount = await Vehicle.countDocuments({
+    userRef: req.query.userId,
+  });
+
+  console.log(vehicleCount);
+  res.status(200).json(vehicles);
 };
 
 // function to fetch popular vehicles

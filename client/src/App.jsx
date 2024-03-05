@@ -45,10 +45,10 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/services" element={<Services />} />
             <Route path="/support" element={<Support />} />
             <Route path="/details/:slug" element={<ViewCar />} />
           </Route>
+          <Route path="/services" element={<Services />} />
           {/* Admin routes */}
           <Route path="" element={<AdminLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
