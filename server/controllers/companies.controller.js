@@ -43,7 +43,7 @@ export const getCompanies = async (req, res, next) => {
 
 // function to update company
 export const createCompany = async (req, res, next) => {
-  const { companyName, companyLogo, city, country } = req.body;
+  const { companyName, companyLogo, city, country, businessType, status } = req.body;
   // check if user has admin flag
   if (!req.user.isAdmin)
     return next(
@@ -60,14 +60,17 @@ export const createCompany = async (req, res, next) => {
     const newCompany = await Company.create({
       companyName,
       companyLogo,
+      businessType,
+      status,
       city,
       country,
       userRef: req.user.id,
       joined,
+      createdBy: req.user.id,
     });
 
-    const createdCompany = await Company.findById(newCompany._id).populate(
-      "userRef",
+    const createdCompany = await newCompany.populate(
+      "userRef createdBy",
       "firstName lastName email"
     );
     res.status(200).json(createdCompany);
@@ -82,7 +85,15 @@ export const updateCompany = async (req, res, next) => {
     return next(
       errorHandler(403, "You do not have rights to complete this action")
     );
-  const { companyName, city, country } = req.body;
+  const {
+    companyName,
+    city,
+    country,
+    status,
+    businessType,
+    companyLogo,
+    userRef,
+  } = req.body;
   try {
     //find company in database
     const company = await Company.findById(req.params.companyId);
@@ -101,14 +112,16 @@ export const updateCompany = async (req, res, next) => {
           companyName,
           city,
           country,
+          status,
+          companyLogo,
+          businessType,
+          userRef,
+          updatedBy: req.user.id,
         },
       },
       { new: true }
-    );
-    await updatedCompany.populate(
-      "userRef",
-      "firstName lastName userName email"
-    );
+    ).populate("userRef updatedBy", "firstName lastName userName email");
+
     res.status(200).json(updatedCompany);
   } catch (error) {
     next(error);

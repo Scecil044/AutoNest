@@ -90,7 +90,13 @@ export default function Companies() {
                     className={index % 2 === 1 ? "bg-gray-100" : ""}
                   >
                     <td className="border-b-2 p-1">{(index += 1)}</td>
-                    <td className="border-b-2 p-1">{company?.companyName}</td>
+                    <td className="border-b-2 p-1">
+                      <img
+                        src={company?.companyLogo}
+                        alt="logo"
+                        className="rounded-full object-cover h-8 w-8"
+                      />
+                    </td>
                     <td className="border-b-2 p-1">{company?.companyName}</td>
                     <td className="border-b-2 p-1">example@gmail.com</td>
                     <td className="border-b-2 p-1">{company?.country}</td>
