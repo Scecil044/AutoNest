@@ -1,3 +1,3 @@
 export default function TestDrive() {
-  return <div>TestDrive</div>;
+  return <div className="min-h-screen">TestDrive</div>;
 }

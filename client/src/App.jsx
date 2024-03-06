@@ -24,6 +24,8 @@ import GuestLayout from "./components/GuestLayout";
 import ViewCompany from "./pages/admin/ViewCompany";
 import CompanyInventory from "./pages/admin/CompanyInventory";
 import TestDrive from "./pages/TestDrive";
+import About from "./pages/About";
+import ContactUs from "./pages/ContactUs";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -49,6 +51,8 @@ export default function App() {
             <Route path="/support" element={<Support />} />
             <Route path="/services" element={<Services />} />
             <Route path="/testDrive" element={<TestDrive />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact/us" element={<ContactUs />} />
             <Route path="/details/:slug" element={<ViewCar />} />
           </Route>
 

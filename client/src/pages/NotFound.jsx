@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 export default function NotFound() {
+  const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -19,7 +21,7 @@ export default function NotFound() {
           </div>
           <button
             onClick={() => {
-              navigate("/login");
+              navigate("/");
             }}
             className="bg-darkGreen text-white self-start p-1 px-4 md:py-3 md:px-4 shadow-md hover:shadow-none"
           >

@@ -89,15 +89,24 @@ export default function Header() {
         </form>
 
         <nav className="flex gap-2">
-          <button className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3">
+          <Link
+            to="/about"
+            className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3"
+          >
             About
-          </button>
-          <button className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3">
+          </Link>
+          <Link
+            to="/services"
+            className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3"
+          >
             Services
-          </button>
-          <button className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3">
+          </Link>
+          <Link
+            to="/contact/us"
+            className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3"
+          >
             Contact us
-          </button>
+          </Link>
           {user ? (
             <img
               onClick={() => setHandleDropDown((prev) => !prev)}
