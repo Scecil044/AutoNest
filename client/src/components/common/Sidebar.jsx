@@ -29,7 +29,10 @@ export default function Sidebar() {
           <FaTools className="h-7 w-7 text-gray-300" />
           Services
         </Link>
-        <Link className="flex flex-col items-center text-nowrap hover:bg-black/50 p-2">
+        <Link
+          to="/testDrive"
+          className="flex flex-col items-center text-nowrap hover:bg-black/50 p-2"
+        >
           <PiEngineFill className="h-7 w-7 text-gray-300" />
           Test Drives
         </Link>

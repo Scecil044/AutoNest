@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="min-h-screen font-lato">
       <div className="flex">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <main className="w-full">
           <div className="h-72 w-full md:relative flex justify-between bg-gradient-to-tr from-black to-gray-400 overflow-hidden">
             <div className="text-white font-lato mt-16 ml-5 md:ml-12 flex-1">

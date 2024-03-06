@@ -23,6 +23,7 @@ import Companies from "./pages/admin/Companies";
 import GuestLayout from "./components/GuestLayout";
 import ViewCompany from "./pages/admin/ViewCompany";
 import CompanyInventory from "./pages/admin/CompanyInventory";
+import TestDrive from "./pages/TestDrive";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -46,9 +47,11 @@ export default function App() {
             <Route path="/cars" element={<Cars />} />
             <Route path="/search" element={<Search />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/testDrive" element={<TestDrive />} />
             <Route path="/details/:slug" element={<ViewCar />} />
           </Route>
-          <Route path="/services" element={<Services />} />
+
           {/* Admin routes */}
           <Route path="" element={<AdminLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />

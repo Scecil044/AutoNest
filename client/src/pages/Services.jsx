@@ -5,28 +5,10 @@ import Events from "../components/common/Events";
 import Financials from "../components/common/Financials";
 
 export default function Services() {
-  const [color, setColor] = useState(false);
 
-  const changeColor = () => {
-    if (window.scrollY >= 50) {
-      setColor(true);
-    } else {
-      setColor(false);
-    }
-  };
-
-  window.addEventListener("scroll", changeColor);
   return (
     <div className="min-h-screen font-lato">
-      <header
-        className={`flex items-center top-0 sticky z-20 h-20 mb-5 p-5 shadow-md bg-[#003566] text-white ${
-          color ? "text-white bg-[#003566]/60" : ""
-        }`}
-      >
-        <Link to={"/"} className="text-3xl">
-          AutoNest
-        </Link>
-      </header>
+  
       <div className="md:flex md:justify-between gap-10 relative mt-10">
         <div className=" bg-[#0077b6] text-white h-[300px] py-5 px-10 flex-1 relative">
           <div className="absolute bg-popsicle p-3 -top-3 w-[40%]"></div>

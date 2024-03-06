@@ -18,6 +18,7 @@ export default function Header() {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
+  const [navBarState, setNavBarState] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -45,11 +46,27 @@ export default function Header() {
       setSearchTerm(searchFromURL);
     }
   }, [location.search]);
+
+  // change navbar color on scroll
+  const initiateNavBarChange = () => {
+    if (window.scrollY >= 20) {
+      setNavBarState(true);
+    } else {
+      setNavBarState(false);
+    }
+  };
+  window.addEventListener("scroll", initiateNavBarChange);
   return (
     <>
-      <header className="bg-[#003566] text-white pr-2 font-lato flex items-center justify-between relative">
-        <Link to="/" className="px-2 text-lg font-roboto font-bold">
-          <span className="text-3xl text-nowrap">A</span>utoNestKe
+      <header
+        className={`bg-[#003566] text-white pr-2 font-lato flex items-center justify-between relative top-0  ${
+          navBarState ? "bg-[#003566]/80" : ""
+        }`}
+        style={{ position: "sticky", top: "0", zIndex: "1000" }}
+      >
+        <Link to="/" className="px-2 text-2xl font-roboto font-bold">
+          <span className="text-3xl text-nowrap">A</span>uto
+          <span className="text-popsicle">Nest</span>Ke
         </Link>
 
         <form
@@ -73,7 +90,12 @@ export default function Header() {
 
         <nav className="flex gap-2">
           <button className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3">
-            <CiPhone className="h-8 w-6" />
+            About
+          </button>
+          <button className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3">
+            Services
+          </button>
+          <button className="hidden md:flex items-center gap-1 hover:bg-black/50 px-2 py-3">
             Contact us
           </button>
           {user ? (
