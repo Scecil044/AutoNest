@@ -5,10 +5,13 @@ import Vehicles from "./Vehicles";
 import PopularCars from "../components/PopularCars";
 import { useState } from "react";
 import { tailChase } from "ldrs";
+import { Carousel } from "flowbite-react";
+import WelcomeModal from "../components/WelcomeModal";
 
 tailChase.register();
 
 export default function Home() {
+  const [openModal, setOpenModal] = useState(true);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const handleShowMore = () => {
@@ -17,33 +20,31 @@ export default function Home() {
       navigate("/cars");
       setLoading(false);
     }, 3000);
-    
   };
   return (
-    <div className="min-h-screen font-lato">
+    <div className="min-h-screen font-lato ">
       <div className="flex">
         {/* <Sidebar /> */}
         <main className="w-full">
-          <div className="h-72 w-full md:relative flex justify-between bg-gradient-to-tr from-black to-gray-400 overflow-hidden">
-            <div className="text-white font-lato mt-16 ml-5 md:ml-12 flex-1">
-              <span className="md:text-[40px] text-[30px] font-serif">
-                <h1>Our Statement:</h1>
-                <h1>Drive Safe & Clean</h1>
-              </span>
-              <Link
-                to="/cars"
-                className=" bg-[#555] py-2 px-2 mt-5 md:mt-10 md:py-3 md:px-6 hover:opacity-85"
-              >
-                View Inventory
-              </Link>
-            </div>
-            <div className="">
+          <div className="h-56 sm:h-64 xl:h-80 2xl:h-96 relative">
+            <Carousel slideInterval={5000}>
               <img
-                src="/vw.png"
-                alt="volkswagen"
-                className="object-cover md:h-96 h-72 md:absolute md:right-0"
+                src="https://imgd-ct.aeplcdn.com/1056x660/cw/ec/41375/BMW-New-X6-Exterior-164773.jpg?v=20193007153007&q=80"
+                alt="..."
+                className="object-cover w-full h-56 sm:h-64 xl:h-80 2xl:h-96"
               />
-            </div>
+              <img
+                src="https://wallpapers.com/images/hd/4k-mercedes-benz-with-trees-1xffhdjq8nfhhrwz.jpg"
+                alt="..."
+                className="object-cover w-full h-56 sm:h-64 xl:h-80 2xl:h-96"
+              />
+              <img
+                src="https://w0.peakpx.com/wallpaper/296/163/HD-wallpaper-mercedes-benz-s-350-d-amg-line.jpg"
+                alt="..."
+                className="object-cover w-full h-56 sm:h-64 xl:h-80 2xl:h-96"
+              />
+            </Carousel>
+            <div className="w-full inset-0 bg-gradient-to-tr from-black/50 to-indigo-600/50 absolute"></div>
           </div>
 
           <div>
@@ -75,6 +76,9 @@ export default function Home() {
           </div>
         </main>
       </div>
+      {openModal && (
+        <WelcomeModal openModal={openModal} setOpenModal={setOpenModal} />
+      )}
     </div>
   );
 }

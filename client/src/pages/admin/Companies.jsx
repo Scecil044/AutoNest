@@ -97,7 +97,11 @@ export default function Companies() {
                         className="rounded-full object-cover h-8 w-8"
                       />
                     </td>
-                    <td className="border-b-2 p-1">{company?.companyName}</td>
+                    <td className="border-b-2 p-1">
+                      <Link to={`/view/company/${company?._id}`}>
+                        {company?.companyName}
+                      </Link>
+                    </td>
                     <td className="border-b-2 p-1">example@gmail.com</td>
                     <td className="border-b-2 p-1">{company?.country}</td>
                     <td className="border-b-2 p-1">{company?.city}</td>

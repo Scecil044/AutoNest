@@ -5,6 +5,7 @@ import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Users() {
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,7 @@ export default function Users() {
         const data = await res.json();
         if (data.success === false) {
           setError(data.message);
+          toast(data.message, { type: "error", theme: "colored" });
           setLoading(false);
           return;
         }
@@ -55,7 +57,6 @@ export default function Users() {
             placeholder="Search"
             className="border-gray-400 focus:outline-none rounded py-1 px-2"
           />
-          
         </div>
         <table className="w-full">
           <thead className="p-2 bg-gray-300 text-left">

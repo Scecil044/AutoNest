@@ -142,7 +142,9 @@ export default function Vehicles() {
                     />
                   </td>
                   <td className="px-2 py-1 border-b-2 text-nowrap">
-                    {vehicle.brand + " " + vehicle.model}
+                    <Link to={`/view/vehicle/${vehicle._id}`}>
+                      {vehicle.brand + " " + vehicle.model}
+                    </Link>
                   </td>
                   <td className="px-2 py-1 border-b-2">{vehicle.year}</td>
                   <td className="px-2 py-1 border-b-2">{vehicle.color}</td>
@@ -160,7 +162,7 @@ export default function Vehicles() {
                   </td>
                   <td className="px-2 py-1 border-b-2 flex items-center gap-2">
                     <Link
-                      to={`/profile/${vehicle._id}`}
+                      to={`/view/vehicle/${vehicle._id}`}
                       className="py-1 px-2 hover:opacity-90 shadow-sm hover:shadow-none transition-all duration-100 flex items-center gap-2 hover:bg-blue-100 hover:scale-105"
                     >
                       <FaEdit className="text-blue-500 h-5 w-5" />

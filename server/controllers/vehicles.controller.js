@@ -87,6 +87,7 @@ export const getVehicles = async (req, res, next) => {
       ...(req.query.model && { model: req.query.model }),
       ...(req.query.color && { color: req.query.color }),
       ...(req.query.slug && { slug: req.query.slug }),
+      ...(req.query.vehicleId && { _id: req.query.vehicleId }),
       ...(req.query.searchTerm && {
         $or: [
           { brand: { $regex: req.query.searchTerm, $options: "i" } },

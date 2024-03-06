@@ -26,6 +26,7 @@ import CompanyInventory from "./pages/admin/CompanyInventory";
 import TestDrive from "./pages/TestDrive";
 import About from "./pages/About";
 import ContactUs from "./pages/ContactUs";
+import EditVehicle from "./pages/admin/EditVehicle";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="/vehicles" element={<Vehicles />} />
             <Route path="/companies" element={<Companies />} />
             <Route path="/view/company/:companyId" element={<ViewCompany />} />
+            <Route path="/view/vehicle/:vehicleId" element={<EditVehicle />} />
             <Route
               path="/company/inventory/:companyId"
               element={<CompanyInventory />}
