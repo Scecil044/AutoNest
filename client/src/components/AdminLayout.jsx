@@ -25,7 +25,10 @@ export default function AdminLayout() {
     <>
       <div className="min-h-screen bg-pampas">
         <header className="w-full bg-pink-800 text-white p-3 flex items-center justify-between shadow-md relative">
-          header
+          <Link to="/dashboard" className="text-lg font-bold">
+            <span className="text-3xl">A</span>UTO
+            <span className="text-popsicle">NEST</span>KENYA
+          </Link>
           {/* avatar */}
           <div
             onClick={() => {

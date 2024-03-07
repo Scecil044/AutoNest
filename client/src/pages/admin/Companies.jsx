@@ -3,6 +3,7 @@ import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../components/common/DeleteModal";
+import { Alert } from "flowbite-react";
 
 export default function Companies() {
   const [companies, setCompanies] = useState([]);
@@ -44,10 +45,17 @@ export default function Companies() {
   return (
     <div className="min-h-screen font-lato">
       <div className="p-5 bg-white border-gray-300 shadow-lg overflow-x-auto table-auto">
-        <div className="flex items-center justify-between mb-2">
-          <button className="py-2 px-4 bg-[#212121] text-white shadow-md hover:shadow-none transition-all duration-100 hover:opacity-90 rounded">
-            Create Company
-          </button>
+        <div className="bg-[#212121] text-white px-2 mb-2">
+          Registered Companies
+        </div>
+        <Alert color="warning" withBorderAccent>
+          <span>
+            <span className="font-medium">Module info!</span> This table shows
+            the list of all registered companies in the system
+          </span>
+        </Alert>
+        <div className="flex items-center justify-between my-2">
+          <div></div>
           <input
             type="text"
             placeholder="Search"
@@ -135,7 +143,11 @@ export default function Companies() {
             </tbody>
           )}
         </table>
+        <div className="mt-2">
+          <div className="bg-[#212121] text-white px-2">Create Company</div>
+        </div>
       </div>
+
       {openModal && (
         <DeleteModal
           role="deleteCompany"

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import DeleteModal from "../../components/common/DeleteModal";
 import { toast } from "react-toastify";
 import CreateVehicleModal from "../../components/CreateVehicleModal";
+import { Alert } from "flowbite-react";
 
 export default function Vehicles() {
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,16 @@ export default function Vehicles() {
           Showing {cars.length} of {totalVehicleCount}
           <p className="text-popsicle">vehicles</p>
         </span>
-        <div className="flex items-center justify-between mb-2">
+        <div className="bg-[#212121] text-white px-2 mb-2">
+           Vehicle Listings
+        </div>
+        <Alert color="warning" withBorderAccent>
+          <span>
+            <span className="font-medium">Module info!</span> This table shows
+            the list of all listings in the system
+          </span>
+        </Alert>
+        <div className="flex items-center justify-between my-2">
           <button
             onClick={() => setOpenCreateModal(true)}
             className="py-2 px-4 bg-[#212121] text-white shadow-md hover:shadow-none transition-all duration-100 hover:opacity-90 rounded"

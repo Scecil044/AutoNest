@@ -3,8 +3,10 @@ import DashboardLoader from "./common/DashboardLoader";
 import { Link } from "react-router-dom";
 import Oauth from "./Oauth";
 import QueueAnim from "rc-queue-anim";
+import { useSelector } from "react-redux";
 
 export default function CarsCard() {
+  const { user } = useSelector((state) => state.user);
   const [vehicleData, setVehicleData] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +28,6 @@ export default function CarsCard() {
           setVehicleData(data);
           setIsLoading(false);
           setIsError(false);
-     
         }
       } catch (error) {
         setIsError(error.message);
@@ -51,7 +52,6 @@ export default function CarsCard() {
         return;
       }
       if (res.ok) {
-     
         setIsLoading(false);
         setIsError(false);
       }
@@ -97,16 +97,18 @@ export default function CarsCard() {
           Show More ...
         </button>
 
-        <div className="flex flex-col items-center justify-center my-5 text-sm">
-          <h3>See Personalized Recommendations?</h3>
-          <Oauth />
-          <span>
-            New? Create one.{" "}
-            <Link className="text-blue-600" to="/register">
-              Start here
-            </Link>
-          </span>
-        </div>
+        {!user && (
+          <div className="flex flex-col items-center justify-center my-5 text-sm">
+            <h3>See Personalized Recommendations?</h3>
+            <Oauth />
+            <span>
+              New? Create one.{" "}
+              <Link className="text-blue-600" to="/register">
+                Start here
+              </Link>
+            </span>
+          </div>
+        )}
       </div>
 
       {isLoading && <DashboardLoader />}

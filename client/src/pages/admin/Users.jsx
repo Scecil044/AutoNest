@@ -6,6 +6,7 @@ import { FaEdit } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Alert } from "flowbite-react";
 
 export default function Users() {
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,16 @@ export default function Users() {
   return (
     <div className="min-h-screen font-lato">
       <div className="p-5 bg-white border-gray-300 shadow-lg table-auto overflow-x-auto">
-        <div className="flex items-center justify-between mb-2">
+        <div className="bg-[#212121] text-white px-2 mb-2">
+          Registered Users
+        </div>
+        <Alert color="warning" withBorderAccent>
+          <span>
+            <span className="font-medium">Module info!</span> This table shows
+            the list of all registered users in the system
+          </span>
+        </Alert>
+        <div className="flex items-center justify-between my-2">
           <button
             onClick={() => {
               setOpenCreateModal(true);

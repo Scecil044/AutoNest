@@ -6,6 +6,15 @@ import { colors } from "../../data";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { MdAutoDelete } from "react-icons/md";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
+import { toast } from "react-toastify";
+import { Alert } from "flowbite-react";
 
 export default function EditVehicle() {
   const { vehicleId } = useParams();
@@ -26,6 +35,12 @@ export default function EditVehicle() {
   const [mileageError, setMileageError] = useState(false);
   const [ownershipError, setOwnershipError] = useState(false);
   const [priceError, setpriceError] = useState(false);
+
+  //Handling image upload
+  const [images, setImages] = useState([]);
+  const [uploadError, setUploadError] = useState(false);
+  const [uploadLoader, setUploadLoader] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
   // form data
   const [formData, setFormData] = useState({
     images: [],
@@ -76,6 +91,67 @@ export default function EditVehicle() {
       images: prevFormData.images.filter((_, index) => index !== indexToRemove),
     }));
   };
+
+  // handle image
+  const handleImage = (e) => {
+    e.preventDefault();
+    if (images.length > 0 && images.length + formData.images.length < 50) {
+      const promises = [];
+      setUploadError(false);
+      setUploadLoader(true);
+      for (let i = 0; i < images.length; i++) {
+        promises.push(saveImages(images[i]));
+      }
+      Promise.all(promises)
+        .then((urls) => {
+          setUploadError(false);
+          setUploadLoader(false);
+          setFormData({
+            ...formData,
+            images: formData.images.concat(urls),
+          });
+          toast("Files Uploaded!", { type: "success", theme: "dark" });
+        })
+        .catch((error) => {
+          setUploadError("Oops! Something went wrong!");
+          toast(uploadError, { type: "error", theme: "dark" });
+          setUploadLoader(false);
+        });
+    } else {
+      setUploadError("You can upload only upto 50 images");
+      toast("Select at least one image", {
+        type: "error",
+        theme: "dark",
+      });
+      setUploadLoader(false);
+    }
+  };
+  // Upload image to firebase
+  const saveImages = async (images) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + images.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, images);
+      uploadTask.on(
+        "status_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress.toFixed(0));
+          // console.log(progress.toFixed(0));
+        },
+        (err) => {
+          reject(err);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+            resolve(url);
+          });
+        }
+      );
+    });
+  };
   const submitForm = async (e) => {
     e.preventDefault();
   };
@@ -112,6 +188,8 @@ export default function EditVehicle() {
     fetchVehicle();
   }, []);
 
+  console.log(formData);
+  console.log(images);
   return (
     <div className="min-h-screen font-lato">
       <form onSubmit={submitForm} className="flex flex-col md:flex-row gap-5">
@@ -557,7 +635,7 @@ export default function EditVehicle() {
             </h1>
             {/* images */}
             <div className="flex gap-5 w-full">
-              {formData?.images.map((item, index) => (
+              {formData.images.map((item, index) => (
                 <div key={index} className="h-20 relative">
                   <button
                     onClick={() => removeImage(index)}
@@ -569,14 +647,42 @@ export default function EditVehicle() {
                   <img
                     src={item}
                     alt="..."
-                    className="object-cover h-20 hover:h-32 hover:w-48 transition-all duration-500 w-32 hover:scale-150"
+                    className="object-cover h-20 transition-all duration-500 w-32"
                   />
                 </div>
               ))}
             </div>
 
-            <div className="my-5">
-              <input type="file" accept="image/*" />
+            <div className="mt-5">
+              {uploadProgress && uploadProgress > 0 && uploadProgress < 100 && (
+                <h1 className="text-center">
+                  Uploading... {uploadProgress}% done{" "}
+                </h1>
+              )}
+              {uploadError && (
+                <Alert color="warning" withBorderAccent>
+                  <span>
+                    <span className="font-medium">Info alert!</span> Change a
+                    few things up and try submitting again. {uploadError}
+                  </span>
+                </Alert>
+              )}
+            </div>
+            <div className="mb-5 flex items-center justify-between p-5 border-4 border-gray-300 border-dashed">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => setImages(e.target.files)}
+              />
+              <button
+                onClick={handleImage}
+                type="button"
+                disabled={uploadLoader}
+                className=" py-2 px-4 shadow-lg border-2 hover:bg-black  hover:text-white transition-all duration-300 rounded"
+              >
+                {uploadLoader ? "Uploading..." : "Upload"}{" "}
+              </button>
             </div>
           </div>
         </div>
