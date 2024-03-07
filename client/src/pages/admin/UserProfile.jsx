@@ -9,14 +9,19 @@ import { app } from "../../firebase";
 import DashboardLoader from "../../components/common/DashboardLoader";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import DeleteModal from "../../components/common/DeleteModal";
+import { Alert } from "flowbite-react";
+import { useSelector } from "react-redux";
 
 export default function UserProfile() {
   const fileRef = useRef(null);
+  const { user } = useSelector((state) => state.user);
   const [uploadError, setUploadError] = useState(null);
   const [uploadPercentage, setUploadPercentage] = useState(null);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const params = useParams();
   const [passwordError, setPasswordError] = useState(null);
@@ -24,6 +29,9 @@ export default function UserProfile() {
   // fetchUsers
   const [userError, setUserError] = useState(false);
   const [userLoading, setUserLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [role, setRole] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -76,6 +84,7 @@ export default function UserProfile() {
         if (data.success === false) {
           setUserError(data.message);
           setUserLoading(false);
+
           return;
         }
         if (res.ok) {
@@ -126,14 +135,15 @@ export default function UserProfile() {
       imageUpload();
     }
   }, [selectedImage, params.id]);
+
   return (
     <div className="min-h-screen">
-      <div className="bg-white shadow-lg border-gray-400">
-        <div className="flex bg-gradient-to-tr from-[#212121] to-[#292929] text-white p-5 h-40 relative">
+      <main className="">
+        <div className="flex bg-gradient-to-tr from-pink-600 via-pink-800 to-popsicle text-white p-5 h-40 relative">
           <img
             src={"https://randomuser.me/portraits/men/34.jpg"}
             alt="profile"
-            className="rounded-full cursor-pointer h-24 w-24 object-cover absolute -bottom-10 md:h-28 md:w-28"
+            className="rounded-full cursor-pointer h-24 w-24 object-cover absolute -bottom-10 md:h-28 md:w-28 z-10"
             onClick={() => fileRef.current.click()}
           />
           <input
@@ -145,11 +155,20 @@ export default function UserProfile() {
             onChange={(e) => setSelectedImage(e.target.files[0])}
           />
         </div>
+        <div className="mt-10">
+          {userError && (
+            <Alert color="warning" withBorderAccent>
+              <span>
+                <span className="font-medium">System Error!</span> {userError}
+              </span>
+            </Alert>
+          )}
+        </div>
         <form
           onSubmit={handleSubmit}
-          className="w-full flex flex-col md:flex-row gap-10 mt-12 p-5 font-lato"
+          className="w-full flex flex-col md:flex-row gap-10 mt-1 p-5 font-lato items-start"
         >
-          <div className="shadow-md p-5 flex-1">
+          <div className="shadow-lg bg-white hover:scale-105 transition-all duration-500 p-5 flex-1 font-lato">
             <div className="grid grid-cols-1 md:grid-cols-2 flex-col gap-3">
               <div className="flex flex-col gap-1">
                 <label className="">First Name</label>
@@ -229,15 +248,15 @@ export default function UserProfile() {
                   }`}
                 />
               </div>
-
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center">
-                  <div>
+            </div>
+            <div className="border-2 border-dashed border-gray-500 p-5 mt-3">
+              <div className="flex flex-col gap-1 ">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
                     <label>Profile Image</label>
                     <input type="file" id="profilePicture" accept="image/*" />
                   </div>
                   <div>
-                    <label className="mb-1"></label>
                     <button
                       type="button"
                       disabled={isLoading}
@@ -250,46 +269,114 @@ export default function UserProfile() {
                     </button>
                   </div>
                 </div>
-
-                {formData.imageUrl && (
-                  <div>
-                    <span>image Preview</span>
-                    <img
-                      src="https://randomuser.me/portraits/men/45.jpg"
-                      alt="profile"
-                      className="object-cover h-16 w-16 rounded-full"
-                    />
-                  </div>
-                )}
               </div>
+              {formData.imageUrl && (
+                <div>
+                  <span>image Preview</span>
+                  <img
+                    src="https://randomuser.me/portraits/men/45.jpg"
+                    alt="profile"
+                    className="object-cover h-16 w-16 rounded-full"
+                  />
+                </div>
+              )}
             </div>
             <button
               onClick={handleSubmit}
               type="submit"
-              className="w-full py-2 px-4 bg-darkGreen text-white rounded shadow-md hover:shadow-none transition-all duration-150 my-2"
+              className="w-full py-2 px-4 bg-pink-600 text-white rounded shadow-md hover:shadow-none transition-all duration-150 my-2 hover:bg-pink-800"
             >
               Update
             </button>
           </div>
-          <div className="shadow-md p-5 md:w-[500px] flex flex-col items-start">
-            <div>
-              <div className="flex gap-2 items-center">
-                <div className="text-nowrap flex-1">System Rights</div>
-                <select
-                  id="rights"
-                  onChange={handleChange}
-                  className="border-gray-300 focus:outline-none w-full"
-                >
-                  <option value="false"> Select</option>
-                  <option value="true">Administrator</option>
-                  <option value="false">User</option>
-                </select>
+          <div className="shadow-lg bg-white hover:scale-105 transition-all duration-500 p-5 md:w-[500px] flex flex-col items-start font-lato">
+            <h1 className="text-red-600 text-xl font-semibold font-serif">
+              Danger Zone
+            </h1>
+            {/* user rights */}
+            <div className="w-full">
+              <div className="flex flex-col gap-2 w-full">
+                <div className="flex items-center gap-2 ">
+                  <div className="text-nowrap flex-1">
+                    <h1 className="text-nowrap">
+                      System Rights and user Privileges
+                    </h1>
+                  </div>
+                  <select
+                    id="rights"
+                    onChange={handleChange}
+                    className="border-gray-300 focus:outline-none focus:ring-0 w-full py-1 px-2"
+                  >
+                    <option value="false">
+                      {formData.isAdmin ? "System Admin" : "User"}
+                    </option>
+                    <option value="true">Administrator</option>
+                    <option value="false">User</option>
+                  </select>
+                </div>
               </div>
+            </div>
+            {/* Delete section */}
+            <div className="grid grid-cols-3 gap-3">
+              {!user.isAdmin ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenModal(true);
+                    setUserId(formData?._id);
+                    setRole("deleteAccount");
+                  }}
+                  className="py-1 px-4 bg-red-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                >
+                  <span className=" text-sm">Delete Account</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenModal(true);
+                    setUserId(params.id);
+                    setRole("deleteUser");
+                  }}
+                  className="py-1 px-4 bg-red-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                >
+                  <span className=" text-sm">Delete User</span>
+                </button>
+              )}
+              {user.isAdmin ? (
+                <>
+                  <button
+                    type="button"
+                    className="py-1 px-4 bg-indigo-800 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                  >
+                    <span className=" text-sm">Suspend Account</span>
+                  </button>
+                  <button className="py-1 px-4 bg-zinc-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90">
+                    <span className=" text-sm">Restrict Account</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="py-1 px-4 bg-emerald-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                  >
+                    <span className=" text-sm">Activate Account</span>
+                  </button>
+                </>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </form>
-      </div>
+      </main>
       {loading && <DashboardLoader />}
+      {openModal && (
+        <DeleteModal
+          role={role}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          userId={userId}
+        />
+      )}
     </div>
   );
 }

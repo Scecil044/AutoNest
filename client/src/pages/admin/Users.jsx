@@ -100,21 +100,21 @@ export default function Users() {
                     key={index}
                     className={index % 2 === 1 ? "bg-gray-200" : ""}
                   >
-                    <td className="p-2 border-b-2">{(index += 1)}</td>
-                    <td className="p-2 border-b-2">
+                    <td className=" border-b-2">{(index += 1)}</td>
+                    <td className=" border-b-2">
                       <img
                         src={user.profilePicture}
                         alt="profile"
                         className="h-9 w-10 object-cover rounded-full"
                       />
                     </td>
-                    <td className="p-2 border-b-2">
+                    <td className=" border-b-2">
                       {user.firstName + " " + user.lastName}
                     </td>
-                    <td className="p-2 border-b-2">{user.email}</td>
-                    <td className="p-2 border-b-2">N/A</td>
-                    <td className="p-2 border-b-2">Active</td>
-                    <td className="p-2 border-b-2 flex items-center gap-2">
+                    <td className=" border-b-2">{user.email}</td>
+                    <td className=" border-b-2">N/A</td>
+                    <td className=" border-b-2">Active</td>
+                    <td className=" border-b-2 flex items-center gap-2">
                       <Link
                         to={`/profile/${user._id}`}
                         className="py-1 px-2 hover:opacity-90 shadow-sm hover:shadow-none transition-all duration-100 flex items-center gap-2 hover:bg-blue-100 hover:scale-105"

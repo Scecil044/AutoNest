@@ -158,7 +158,7 @@ const systemUsers = [
   },
 ];
 
-let adminLinks = [
+const adminLinks = [
   {
     name: "Home",
     link: "/dashboard",
@@ -177,6 +177,12 @@ let adminLinks = [
   },
 ];
 
+const userLinks = [
+  {
+    name: "Home",
+    link: "/my/dash",
+  },
+];
 const colors = ["white", "black", "blue", "red", "silver", "grey"];
 const fuelType = ["super", "diesel", "petrol", "Hybrid", "electric"];
 
@@ -211,4 +217,5 @@ export {
   adminLinks,
   fuelType,
   brandModelsMap,
+  userLinks,
 };

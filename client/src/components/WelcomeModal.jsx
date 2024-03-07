@@ -1,6 +1,6 @@
 export default function WelcomeModal({ setOpenModal, openModal }) {
   return (
-    <div className="inset-0 fixed h-full items-center flex justify-center bg-black/70">
+    <div className="inset-0 fixed h-full items-center flex justify-center">
       <div className="px-5 bg-white h-72 w-[550px] relative flex">
         <img
           src="/welcome2.png"

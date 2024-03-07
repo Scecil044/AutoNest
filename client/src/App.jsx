@@ -27,6 +27,8 @@ import TestDrive from "./pages/TestDrive";
 import About from "./pages/About";
 import ContactUs from "./pages/ContactUs";
 import EditVehicle from "./pages/admin/EditVehicle";
+import AdminLogin from "./pages/admin/AdminLogin";
+import UserHome from "./pages/admin/UserHome";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -60,6 +62,7 @@ export default function App() {
           {/* Admin routes */}
           <Route path="" element={<AdminLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/my/dash" element={<UserHome />} />
             <Route path="/profile/:id" element={<UserProfile />} />
             <Route path="/users" element={<Users />} />
             <Route path="/vehicles" element={<Vehicles />} />
@@ -76,6 +79,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Route>
+          <Route path="/atn/auth" element={<AdminLogin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

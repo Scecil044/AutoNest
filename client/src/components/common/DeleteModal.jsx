@@ -3,6 +3,7 @@ import { IoIosWarning } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { signOutUser } from "../../firebase/userSlice";
 
 export default function DeleteModal({
   role,
@@ -62,6 +63,7 @@ export default function DeleteModal({
         setIsLoading(false);
         setIsError(false);
         setOpenModal(false);
+        navigate("/users");
         toast("User deleted successfully", { type: "success", theme: "dark" });
       }
     } catch (error) {
@@ -93,11 +95,45 @@ export default function DeleteModal({
       setIsLoading(false);
     }
   };
+  // function to delete account
+  const deleteAccount = async () => {
+    try {
+      setIsLoading(true);
+      setIsError(false);
+      const res = await fetch(`/api/users/delete/user/${userId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setIsLoading(false);
+        setIsError(false);
+        toast(data.message, { type: "error", theme: "dark" });
+        return;
+      }
+      setOpenModal(false);
+      setIsLoading(false);
+      dispatch(signOutUser());
+      setIsError(false);
+    } catch (error) {
+      setIsError(error.message);
+      setIsLoading(false);
+    }
+  };
   return (
-    <div className="h-full flex items-center justify-center inset-0 fixed bg-black/50">
-      <div className="shadow-lg pt-5 pb-2 px-5 w-[80%] md:w-[30%] border border-gray-300 bg-white">
+    <div className="h-full flex items-center justify-center inset-0 fixed bg-black/50 z-50">
+      <div
+        className={`shadow-lg pt-5 pb-2 px-5 w-[80%] md:w-[30%] border border-gray-300 bg-white ${
+          role === "deleteAccount" ? "md:w-[35%]" : ""
+        }`}
+      >
         <div className="flex gap-3 mb-2">
-          <IoIosWarning className="h-16 w-16 text-red-700" />
+          <IoIosWarning
+            className={`h-16 w-16  ${
+              role === "deleteAccount"
+                ? "animate-pulse text-red-700"
+                : "text-red-700"
+            }`}
+          />
           {role === "deleteUser" ? (
             <div className="border-l-4 border-red-400 px-1">
               <p className="font-semibold">Proceed to delete this user?</p>
@@ -125,6 +161,17 @@ export default function DeleteModal({
                 database!
               </p>
             </div>
+          ) : role === "deleteAccount" ? (
+            <div className="border-l-4 border-red-400 px-1">
+              <p className="font-semibold">Proceed to delete Your account?</p>
+              <p className="text-sm">
+                This trigger delete all your corresponding details in the
+                system. Note that this action is{" "}
+                <span className="text-red-600 font-semibold text-lg">
+                  Not Reversible!
+                </span>
+              </p>
+            </div>
           ) : (
             ""
           )}
@@ -135,12 +182,13 @@ export default function DeleteModal({
             onClick={() => {
               setOpenModal(false);
             }}
-            className="py-1 px-4 bg-darkGreen text-white"
+            className="py-1 px-4 bg-popsicle text-white"
           >
             Cancel
           </button>
           {role === "deleteUser" && (
             <button
+              type="button"
               disabled={isLoading}
               className={`py-1 px-4 bg-red-700 text-white flex items-center gap-1 disabled:cursor-not-allowed`}
               onClick={deleteUser}
@@ -148,7 +196,7 @@ export default function DeleteModal({
               {isLoading && (
                 <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>
               )}
-              Delete
+              Delete user
             </button>
           )}
           {role === "deleteVehicle" && (
@@ -173,6 +221,18 @@ export default function DeleteModal({
                 <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>
               )}
               Delete
+            </button>
+          )}
+          {role === "deleteAccount" && (
+            <button
+              disabled={isLoading}
+              className={`py-1 px-4 bg-red-700 text-white flex items-center gap-1 disabled:cursor-not-allowed`}
+              onClick={deleteAccount}
+            >
+              {isLoading && (
+                <div className="rounded-full animate-spin h-4 w-4 border-r-2 border-b-2 border-white"></div>
+              )}
+              Proceed
             </button>
           )}
         </div>

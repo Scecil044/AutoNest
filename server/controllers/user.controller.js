@@ -4,7 +4,7 @@ import bcrypt_js from "bcryptjs";
 
 // function to get users
 export const getUsers = async (req, res, next) => {
-  if (!req.user.isAdmin)
+  if (!req.user.isAdmin && req.query.userId !== req.user.id)
     return next(errorHandler(403, "You do not have administrator rights!"));
   try {
     const startIndex = req.query.startIndex || 0;
@@ -56,7 +56,7 @@ export const deleteUser = async (req, res, next) => {
           `No user with matching id : ${req.params.id} was found`
         )
       );
-    res.status(200).json(user._id);
+    res.status(200).json("user deleted successfully");
   } catch (error) {
     next(error);
   }

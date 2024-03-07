@@ -21,7 +21,7 @@ export default function AdminLayout() {
       console.log(error);
     }
   };
-  return user && user.isAdmin ? (
+  return user ? (
     <>
       <div className="min-h-screen bg-pampas">
         <header className="w-full bg-pink-800 text-white p-3 flex items-center justify-between shadow-md relative">
@@ -34,7 +34,7 @@ export default function AdminLayout() {
             onClick={() => {
               setHandleDropDown((prev) => !prev);
             }}
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center"
           >
             <img
               src={
@@ -44,11 +44,17 @@ export default function AdminLayout() {
               alt="avatar"
               className="h-10 w-10 object-cover rounded-full"
             />
+            <small>
+              {user?.firstName + " " + user?.lastName.charAt(0).toUpperCase()}
+            </small>
           </div>
           {handleDropDown && (
-            <div className="absolute bg-white w-[160px] top-[70px] text-black right-1 z-10 shadow-md border-gray-300">
+            <div className="absolute bg-white w-[190px] top-[70px] text-black right-1 z-10 shadow-md border-gray-300">
               <div className="flex flex-col">
-                <Link className="flex gap-1 items-center py-2 px-2 w-full hover:bg-black/50 hover:text-white transition-all duration-200">
+                <Link
+                  to={`/profile/${user._id}`}
+                  className="flex gap-1 items-center py-2 px-2 w-full hover:bg-black/50 hover:text-white transition-all duration-200"
+                >
                   <FaUserFriends className="h-7 w-7" />
                   Profile
                 </Link>
@@ -75,8 +81,6 @@ export default function AdminLayout() {
       </div>
     </>
   ) : (
-    <>
-      <Navigate to="/login" />
-    </>
+    <Navigate to="atn/auth" />
   );
 }
