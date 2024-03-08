@@ -15,6 +15,7 @@ export default function Users() {
   const [openModal, setOpenModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -65,6 +66,8 @@ export default function Users() {
           <input
             type="text"
             placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="border-gray-400 focus:outline-none rounded py-1 px-2"
           />
         </div>

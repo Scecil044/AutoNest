@@ -7,6 +7,11 @@ const CompanySchema = new mongoose.Schema(
       required: [true, "The company name field is required"],
       unique: [true, "The company name field is a unique key"],
     },
+    companyAddress: {
+      type: String,
+      required: [true, "The company address name field is required"],
+      unique: [true, "The company address name field is a unique key"],
+    },
     bannerImage: {
       type: String,
       default:
@@ -39,6 +44,12 @@ const CompanySchema = new mongoose.Schema(
       type: String,
       default:
         "https://t4.ftcdn.net/jpg/04/92/63/65/360_F_492636561_H6OAg0fwcyJL0KmlYWur44u6LTa6maOQ.jpg",
+    },
+    companyEmail: {
+      type: String,
+    },
+    companyPhoneNumber: {
+      type: String,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

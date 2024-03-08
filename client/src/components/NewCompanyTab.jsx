@@ -8,14 +8,17 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 import ImageLoader from "./common/ImageLoader";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function NewCompanyTab() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
-  const [companyNameError, setCompanynameError] = useState(false);
+  const [companyNameError, setCompanyNameError] = useState(false);
   const [companyAddressError, setCompanyAddressError] = useState(false);
   const [countryError, setCountryError] = useState(false);
   const [companyTypeError, setCompanyTypeError] = useState(false);
-  const [ownerError, setOwenerError] = useState(false);
+  const [ownerError, setOwnerError] = useState(false);
   const [cityError, setCityError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -31,9 +34,87 @@ export default function NewCompanyTab() {
   const [bannerImageError, setBannerImageError] = useState(false);
   const [imageUploadLoader, setImageUploadLoader] = useState(false);
   const [companyLogoError, setCompanyLogoError] = useState(false);
+
+  const handlePhoneInput = (e) => {
+    const inputValue = e.target.value;
+    const isValid = /^\+\d{12}$/.test(inputValue);
+    if (isValid) {
+      setFormData({ ...formData, companyPhoneNumber: inputValue });
+    } else {
+      setPhoneError("Invalid Phone Number");
+    }
+  };
   // function to submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      if (!formData.companyName || formData.companyName === "") {
+        setCompanyNameError("The company name field is required");
+      } else {
+        setCompanyNameError(false);
+      }
+      if (!formData.companyEmail || formData.companyEmail === "") {
+        setEmailError("The company email field is required");
+      } else {
+        setCompanyNameError(false);
+      }
+      if (!formData.companyPhoneNumber || formData.companyPhoneNumber === "") {
+        setPhoneError("The company phone number field is required");
+      } else {
+        setPhoneError(false);
+      }
+      if (!formData.city || formData.city === "") {
+        setCityError("The City field is required");
+      } else {
+        setCityError(false);
+      }
+      if (!formData.country || formData.country === "") {
+        setCountryError("The country field is required");
+      } else {
+        setCountryError(false);
+      }
+      if (!formData.userRef || formData.userRef === "") {
+        setOwnerError("The Managed by field is required");
+      } else {
+        setOwnerError(false);
+      }
+      if (!formData.businessType || formData.businessType === "") {
+        setCompanyTypeError("The business type field is required");
+      } else {
+        setCompanyTypeError(false);
+      }
+      if (!formData.companyAddress || formData.companyAddress === "") {
+        setCompanyAddressError("The Address field is required");
+        return;
+      } else {
+        setCompanyAddressError(false);
+      }
+      setCreationError(false);
+      setCreationLoader(true);
+      const res = await fetch("/api/companies/create/company", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = res.json();
+      if (!res.ok) {
+        toast(data.message, { type: "error" });
+        setCreationError(data.message);
+
+        setCreationLoader(false);
+      }
+      if (res.ok) {
+        toast("Company created!", { type: "success" });
+        setCreationLoader(false);
+        setCreationError(false);
+        navigate("/companies");
+      }
+    } catch (error) {
+      setCreationError(error.message);
+      setCreationLoader(false);
+    }
   };
 
   useEffect(() => {
@@ -96,7 +177,7 @@ export default function NewCompanyTab() {
         const fileName = new Date().getTime() + companyLogo.name;
         const storage = getStorage(app);
         const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, bannerImage);
+        const uploadTask = uploadBytesResumable(storageRef, companyLogo);
         uploadTask.on(
           "status_changed",
           (snapshot) => {
@@ -122,11 +203,11 @@ export default function NewCompanyTab() {
     }
 
     fetchUsers();
-  }, [bannerImage, companyLogo]);
+  }, [bannerImage, companyLogo, creationLoader]);
   console.log(formData);
 
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       {error && (
         <Alert color="failure" withBorderAccent>
           <span>
@@ -146,10 +227,7 @@ export default function NewCompanyTab() {
           </span>
         </Alert>
       )}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-3"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="flex flex-col">
           <label className="text-sm font-semibold">Company Name</label>
           <input
@@ -166,7 +244,7 @@ export default function NewCompanyTab() {
           )}
         </div>
         <div className="flex flex-col">
-          <label className="text-sm font-semibold">Company Name</label>
+          <label className="text-sm font-semibold">Company Address</label>
           <input
             type="text"
             placeholder="Address"
@@ -176,7 +254,7 @@ export default function NewCompanyTab() {
             }
             className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-pink-50"
           />
-          {companyAddressError && (
+          {companyAddressError && !formData.companyAddress && (
             <span className="text-sm text-red-600">{companyAddressError}</span>
           )}
         </div>
@@ -243,7 +321,7 @@ export default function NewCompanyTab() {
             {users &&
               users.length > 0 &&
               users.map((item, index) => (
-                <option key={index} value={item?.userRef?._id}>
+                <option key={index} value={item?._id}>
                   {item?.firstName + " " + item?.lastName}
                 </option>
               ))}
@@ -258,12 +336,10 @@ export default function NewCompanyTab() {
             type="text"
             placeholder="e.g +254700909090"
             id="companyPhoneNumber"
-            onChange={(e) =>
-              setFormData({ ...formData, companyPhoneNumber: e.target.value })
-            }
+            onChange={handlePhoneInput}
             className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-pink-50"
           />
-          {phoneError && (
+          {phoneError && !formData.companyPhoneNumber && (
             <span className="text-sm text-red-600">{phoneError}</span>
           )}
         </div>
@@ -274,15 +350,15 @@ export default function NewCompanyTab() {
             placeholder="example@gmail.com"
             id="companyEmail"
             onChange={(e) =>
-              setFormData({ ...formData, companyEmail: e.target.value })
+              setFormData({ ...formData, companyEmail: e.target.value.trim() })
             }
             className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-pink-50"
           />
-          {emailError && (
+          {emailError && !formData.companyEmail && (
             <span className="text-sm text-red-600">{emailError}</span>
           )}
         </div>
-      </form>
+      </div>
       {bannerImageError ||
         (companyLogoError && (
           <div className="my-1">
@@ -321,16 +397,16 @@ export default function NewCompanyTab() {
         <div className="logo-preview mt-1">
           {formData.companyLogo && (
             <img
-              src="https://imgd-ct.aeplcdn.com/370x208/n/cw/ec/130591/fronx-exterior-right-front-three-quarter-109.jpeg?isig=0&q=80"
+              src={formData.companyLogo}
               alt="..."
               className="object-cover h-28 w-28 border-2 border-gray-400"
             />
           )}
         </div>
         <div className="banner-preview mt-1">
-          {formData.brandImage && (
+          {formData.bannerImage && (
             <img
-              src="https://imgd-ct.aeplcdn.com/370x208/n/cw/ec/130591/fronx-exterior-right-front-three-quarter-109.jpeg?isig=0&q=80"
+              src={formData.bannerImage}
               alt="..."
               className="object-cover h-28 w-28 border-2 border-gray-400"
             />
@@ -349,6 +425,6 @@ export default function NewCompanyTab() {
         </button>
         {imageUploadLoader && <ImageLoader />}
       </div>
-    </>
+    </form>
   );
 }

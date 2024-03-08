@@ -43,7 +43,18 @@ export const getCompanies = async (req, res, next) => {
 
 // function to update company
 export const createCompany = async (req, res, next) => {
-  const { companyName, companyLogo, city, country, businessType, status } = req.body;
+  const {
+    companyName,
+    companyLogo,
+    city,
+    country,
+    businessType,
+    companyEmail,
+    companyAddress,
+    companyPhoneNumber,
+    userRef,
+    status,
+  } = req.body;
   // check if user has admin flag
   if (!req.user.isAdmin)
     return next(
@@ -59,12 +70,15 @@ export const createCompany = async (req, res, next) => {
     const joined = new Date().getFullYear();
     const newCompany = await Company.create({
       companyName,
+      status,
+      companyPhoneNumber,
+      companyAddress,
+      companyEmail,
       companyLogo,
       businessType,
-      status,
       city,
       country,
-      userRef: req.user.id,
+      userRef,
       joined,
       createdBy: req.user.id,
     });

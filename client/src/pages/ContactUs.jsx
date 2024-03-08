@@ -9,12 +9,42 @@ export default function ContactUs() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [contentError, setContentError] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const submitRequest = async (e) => {
     e.preventDefault();
+    if (!formData.firstName || formData.firstName === "") {
+      setFirstNameError("The first name field is required");
+    } else {
+      setFirstNameError(false);
+    }
+    if (!formData.lastName || formData.lastName === "") {
+      setLastNameError("The last name field is required");
+    } else {
+      setLastNameError(false);
+    }
+    if (!formData.email || formData.email === "") {
+      setEmailError("The email field is required");
+    } else {
+      setEmailError(false);
+    }
+    if (!formData.phone || formData.phone === "") {
+      setPhoneError("The mobile number field is required");
+    } else {
+      setPhoneError(false);
+    }
+    if (!formData.text || formData.text === "") {
+      setContentError("The content field is required");
+    } else {
+      setContentError(false);
+    }
   };
   return (
     <div className="min-h-screen font-lato">
@@ -68,8 +98,13 @@ export default function ContactUs() {
                     placeholder="First Name"
                     id="firstName"
                     onChange={handleChange}
-                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded"
+                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-blue-50"
                   />
+                  {firstNameError && !formData.firstName && (
+                    <span className="text-sm text-red-600">
+                      {firstNameError}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col">
                   <label className="text-sm font-semibold">Last Name</label>
@@ -78,8 +113,13 @@ export default function ContactUs() {
                     placeholder="Last Name"
                     id="lastName"
                     onChange={handleChange}
-                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded"
+                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-blue-50"
                   />
+                  {lastNameError && !formData.lastName && (
+                    <span className="text-sm text-red-600">
+                      {lastNameError}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col">
                   <label className="text-sm font-semibold">Email</label>
@@ -88,8 +128,11 @@ export default function ContactUs() {
                     placeholder="Email"
                     id="email"
                     onChange={handleChange}
-                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded"
+                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-blue-50"
                   />
+                  {emailError && !formData.email && (
+                    <span className="text-sm text-red-600">{emailError}</span>
+                  )}
                 </div>
 
                 <div className="flex flex-col">
@@ -99,8 +142,11 @@ export default function ContactUs() {
                     placeholder="Phone"
                     id="phone"
                     onChange={handleChange}
-                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded"
+                    className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-blue-50"
                   />
+                  {phoneError && !formData.phone && (
+                    <span className="text-sm text-red-600">{phoneError}</span>
+                  )}
                 </div>
 
                 <div className="text-editor">
@@ -123,6 +169,9 @@ export default function ContactUs() {
                       console.log("Focus.", editor);
                     }}
                   />
+                  {contentError && !formData.text && (
+                    <span className="text-sm text-red-600">{contentError}</span>
+                  )}
                 </div>
                 <button
                   disabled={loading}

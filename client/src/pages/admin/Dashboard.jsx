@@ -11,6 +11,7 @@ import Analytics from "./dashboard/Analytics";
 import Sales from "./dashboard/Sales";
 import Graphs from "./dashboard/Graphs";
 import Numbers from "./dashboard/Numbers";
+import VehiclesGraph from "./dashboard/VehiclesGraph";
 
 export default function Dashboard() {
   const [showWarning, setShowWarning] = useState(true);
@@ -44,6 +45,7 @@ export default function Dashboard() {
         </div>
         <div className="flex-1 flex flex-col gap-5">
           <Analytics />
+          <VehiclesGraph />
           <RecentRequests />
         </div>
       </main>

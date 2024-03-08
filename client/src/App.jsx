@@ -29,6 +29,7 @@ import ContactUs from "./pages/ContactUs";
 import EditVehicle from "./pages/admin/EditVehicle";
 import AdminLogin from "./pages/admin/AdminLogin";
 import UserHome from "./pages/admin/UserHome";
+import SubscriptionModal from "./pages/SubscriptionModal";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -79,6 +80,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Route>
+          <Route path="/subscription" element={<SubscriptionModal />} />
           <Route path="/atn/auth" element={<AdminLogin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

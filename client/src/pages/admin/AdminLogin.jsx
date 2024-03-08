@@ -54,11 +54,11 @@ export default function AdminLogin() {
         if (data.isAdmin) {
           navigate("/dashboard");
         } else {
-          navigate("/my/dash");
+          navigate("/subscription");
         }
 
         setWarning(false);
-        toast("welcome back", { type: "success", theme: "dark" });
+        
       }
     } catch (error) {
       setWarning(true);

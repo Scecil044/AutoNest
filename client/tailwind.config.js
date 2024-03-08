@@ -16,6 +16,7 @@ export default {
         mango: "#FFEO83",
         linen: "#fdfaf5",
         pampas: "#e9e5df",
+        darkBlue:"#003566"
       },
       fontFamily: {
         roboto: "roboto",
