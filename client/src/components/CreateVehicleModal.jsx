@@ -1,3 +1,4 @@
+import { Alert } from "flowbite-react";
 import { useState } from "react";
 import { colors } from "../data";
 import { fuelType } from "../data";
@@ -285,10 +286,19 @@ export default function CreateVehicleModal({
     <div className="h-full fixed inset-0 w-full bg-black/50 flex items-center justify-center">
       <form
         onSubmit={handleCreateVehicle}
-        className="bg-white p-5 w-[90%] sm:w-[80%] md:w-[60%] shadow-md border-2 border-gray-300 rounded font-lato overflow-y-auto"
+        className="bg-white p-5 w-[90%] sm:w-[80%] md:w-[70%] shadow-md border-2 border-gray-300 rounded font-lato overflow-y-auto"
       >
         {/* header */}
         <h1 className="font-semibold text-lg text-darkGreen">Create Vehicle</h1>
+        <div className="my-1">
+          <Alert color="warning" withBorderAccent>
+            <span>
+              <span className="font-medium">Module info!</span> Each vehicle is
+              affiliated to a maximum of one company! All veicles created here
+              will be listed on the home page
+            </span>
+          </Alert>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-5 my-2">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold">Brand</label>

@@ -175,6 +175,22 @@ const adminLinks = [
     name: "companies",
     link: "/companies",
   },
+  {
+    name: "Reminders",
+    link: "/reminders",
+  },
+  {
+    name: "Finance",
+    link: "/finance",
+  },
+  {
+    name: "Reports",
+    link: "/reports",
+  },
+  {
+    name: "Settings",
+    link: "/settings",
+  },
 ];
 
 const userLinks = [

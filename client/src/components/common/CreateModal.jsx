@@ -1,3 +1,4 @@
+import { Alert } from "flowbite-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -63,7 +64,7 @@ export default function CreateModal({ setOpenCreateModal, openCreateModal }) {
         setIsLoading(false);
         toast(data.message, {
           type: "error",
-          theme: "colored",
+          theme: "dark",
         });
       }
       if (res.ok) {
@@ -84,6 +85,16 @@ export default function CreateModal({ setOpenCreateModal, openCreateModal }) {
       >
         <div>
           <h1 className="font-semibold text-lg">Create User</h1>
+          <div className="my-1 border-l-4 border-pink-600">
+            <Alert color="warning" withBorderAccent>
+              <span>
+                <span className="font-medium">Modal info!</span> Users added
+                into the system will be able to create companies, and make
+                listings. Note that the scope of their rights is likely to
+                change as the app grows
+              </span>
+            </Alert>
+          </div>
           <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             <div className="flex flex-col mb-1">
               <span className="font-semibold text-sm">First Name</span>

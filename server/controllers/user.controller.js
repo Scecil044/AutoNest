@@ -88,8 +88,10 @@ export const updateUser = async (req, res, next) => {
         email: req.body.email,
         userName: req.body.userName,
         password: hashedPassword,
-        isDisabled: req.body.isDisabled,
+        isDisabled: Boolean(req.body.isDisabled),
         isAdmin: req.body.isAdmin,
+        isRestricted: Boolean(req.body.isRestricted),
+        profilePicture: req.body.profilePicture,
       },
     },
     { new: true }

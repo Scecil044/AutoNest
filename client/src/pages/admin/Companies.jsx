@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../components/common/DeleteModal";
 import { Alert } from "flowbite-react";
+import CompanyTabs from "../../components/CompanyTabs";
 
 export default function Companies() {
   const [companies, setCompanies] = useState([]);
@@ -48,12 +49,27 @@ export default function Companies() {
         <div className="bg-[#212121] text-white px-2 mb-2">
           Registered Companies
         </div>
-        <Alert color="warning" withBorderAccent>
-          <span>
-            <span className="font-medium">Module info!</span> This table shows
-            the list of all registered companies in the system
-          </span>
-        </Alert>
+        {!error && (
+          <Alert color="warning" withBorderAccent>
+            <span>
+              <span className="font-medium">Module info!</span> This table shows
+              the list of all registered companies in the system
+            </span>
+          </Alert>
+        )}
+        <div className="">
+          {!loading && error && (
+            <Alert color="failure" withBorderAccent>
+              <span>
+                <span className="font-bold font-serif text-red-600">
+                  Error info!
+                </span>{" "}
+                Could not load companies. Please chack your interent connection
+                or refresh this module
+              </span>
+            </Alert>
+          )}
+        </div>
         <div className="flex items-center justify-between my-2">
           <div></div>
           <input
@@ -114,9 +130,9 @@ export default function Companies() {
                     <td className="border-b-2 p-1">{company?.country}</td>
                     <td className="border-b-2 p-1">{company?.city}</td>
                     <td className="border-b-2 p-1">
-                      {company?.userRef.firstName +
+                      {company?.userRef?.firstName +
                         " " +
-                        company?.userRef.lastName}
+                        company?.userRef?.lastName}
                     </td>
                     <td className="border-b-2 p-1">{company?.joined}</td>
                     <td className="border-b-2 p-1 flex items-center gap-1">
@@ -145,6 +161,9 @@ export default function Companies() {
         </table>
         <div className="mt-2">
           <div className="bg-[#212121] text-white px-2">Create Company</div>
+          <div className="my-2">
+            <CompanyTabs />
+          </div>
         </div>
       </div>
 

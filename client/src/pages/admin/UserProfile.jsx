@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import DeleteModal from "../../components/common/DeleteModal";
 import { Alert } from "flowbite-react";
 import { useSelector } from "react-redux";
+import ImageLoader from "../../components/common/ImageLoader";
 
 export default function UserProfile() {
   const fileRef = useRef(null);
@@ -72,7 +73,36 @@ export default function UserProfile() {
       setUserError(error.message);
     }
   };
-
+  const handleFile = (e) => {
+    e.preventDefault();
+    setUserLoading(true);
+    setUploadError(false);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + selectedImage.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+    uploadTask.on(
+      "status_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadPercentage(progress.toFixed(o));
+        setUserLoading(false);
+        setUploadError(false);
+      },
+      (error) => {
+        setUploadError(error);
+        setUserLoading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({ ...formData, profilePicture: downloadURL });
+          setUploadError(false);
+          setUserLoading(false);
+        });
+      }
+    );
+  };
   useEffect(() => {
     // Get user details from database
     const fetchUser = async () => {
@@ -125,7 +155,7 @@ export default function UserProfile() {
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              setFormData({ ...formData, imageURL: downloadURL });
+              setFormData({ ...formData, profilePicture: downloadURL });
             });
             setUploadError(null);
             setIsLoading(false);
@@ -141,7 +171,7 @@ export default function UserProfile() {
       <main className="">
         <div className="flex bg-gradient-to-tr from-pink-600 via-pink-800 to-popsicle text-white p-5 h-40 relative">
           <img
-            src={"https://randomuser.me/portraits/men/34.jpg"}
+            src={formData.profilePicture}
             alt="profile"
             className="rounded-full cursor-pointer h-24 w-24 object-cover absolute -bottom-10 md:h-28 md:w-28 z-10"
             onClick={() => fileRef.current.click()}
@@ -155,7 +185,17 @@ export default function UserProfile() {
             onChange={(e) => setSelectedImage(e.target.files[0])}
           />
         </div>
-        <div className="mt-10">
+        <div className="bg-[#212121] text-white px-2 mb-2">
+          <h2 className="ml-32 font-serif">User profile</h2>
+        </div>
+        <Alert color="warning" withBorderAccent>
+          <span>
+            <span className="font-medium">Module info!</span> This module shows
+            the account details for{" "}
+            {formData?.firstName + " " + formData?.lastName}
+          </span>
+        </Alert>
+        <div className="mt-2">
           {userError && (
             <Alert color="warning" withBorderAccent>
               <span>
@@ -166,7 +206,7 @@ export default function UserProfile() {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="w-full flex flex-col md:flex-row gap-10 mt-1 p-5 font-lato items-start"
+          className="w-full flex flex-col md:flex-row gap-10 mt-1 font-lato items-start"
         >
           <div className="shadow-lg bg-white hover:scale-105 transition-all duration-500 p-5 flex-1 font-lato">
             <div className="grid grid-cols-1 md:grid-cols-2 flex-col gap-3">
@@ -252,58 +292,56 @@ export default function UserProfile() {
             <div className="border-2 border-dashed border-gray-500 p-5 mt-3">
               <div className="flex flex-col gap-1 ">
                 <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <label>Profile Image</label>
-                    <input type="file" id="profilePicture" accept="image/*" />
-                  </div>
-                  <div>
-                    <button
-                      type="button"
-                      disabled={isLoading}
-                      className="py-2 px-4 flex gap-1 items-center text-white border-2 border-darkgreen bg-popsicle"
-                    >
-                      {isLoading && (
-                        <div className="motion-safe:animate-spin h-5 w-5 border-white rounded-full border-r-2 border-b-2"></div>
-                      )}
-                      {isLoading ? "Uploading" : " Upload"}
-                    </button>
-                  </div>
+                  <div></div>
                 </div>
               </div>
-              {formData.imageUrl && (
+              {formData.profilePicture && (
                 <div>
                   <span>image Preview</span>
                   <img
-                    src="https://randomuser.me/portraits/men/45.jpg"
+                    src={formData.profilePicture || ""}
                     alt="profile"
                     className="object-cover h-16 w-16 rounded-full"
                   />
+                  <div className="mt-2">
+                    {uploadError && (
+                      <Alert color="failure" withBorderAccent>
+                        <span>
+                          <span className="font-medium">Upload info!</span>{" "}
+                          Selected image must not be of size greater than 2MBs.
+                          Refresh this page and retry
+                        </span>
+                      </Alert>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
             <button
               onClick={handleSubmit}
               type="submit"
-              className="w-full py-2 px-4 bg-pink-600 text-white rounded shadow-md hover:shadow-none transition-all duration-150 my-2 hover:bg-pink-800"
+              disabled={userLoading}
+              className="w-full py-2 px-4 bg-pink-600 text-white rounded shadow-md hover:shadow-none transition-all duration-150 my-2 hover:bg-pink-800 disabled:cursor-not-allowed"
             >
               Update
             </button>
           </div>
-          <div className="shadow-lg bg-white hover:scale-105 transition-all duration-500 p-5 md:w-[500px] flex flex-col items-start font-lato">
+          <div className="shadow-lg bg-white hover:scale-105 transition-all duration-500 p-5 md:w-[350px] flex flex-col items-start font-lato">
+            <button className="py-2 px-4 shadow-lg my-1 border-gray-300 border hover:shadow-xl">
+              Business Listing
+            </button>
             <h1 className="text-red-600 text-xl font-semibold font-serif">
               Danger Zone
             </h1>
             {/* user rights */}
-            <div className="w-full">
+            <div className="w-full my-3">
               <div className="flex flex-col gap-2 w-full">
                 <div className="flex items-center gap-2 ">
                   <div className="text-nowrap flex-1">
-                    <h1 className="text-nowrap">
-                      System Rights and user Privileges
-                    </h1>
+                    <h1 className="text-nowrap">System Rights</h1>
                   </div>
                   <select
-                    id="rights"
+                    id="isAdmin"
                     onChange={handleChange}
                     className="border-gray-300 focus:outline-none focus:ring-0 w-full py-1 px-2"
                   >
@@ -328,7 +366,7 @@ export default function UserProfile() {
                   }}
                   className="py-1 px-4 bg-red-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
                 >
-                  <span className=" text-sm">Delete Account</span>
+                  <span className=" text-sm text-nowrap">Delete </span>
                 </button>
               ) : (
                 <button
@@ -340,26 +378,55 @@ export default function UserProfile() {
                   }}
                   className="py-1 px-4 bg-red-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
                 >
-                  <span className=" text-sm">Delete User</span>
+                  <span className=" text-sm text-nowrap">Delete </span>
                 </button>
               )}
               {user.isAdmin ? (
                 <>
-                  <button
-                    type="button"
-                    className="py-1 px-4 bg-indigo-800 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
-                  >
-                    <span className=" text-sm">Suspend Account</span>
-                  </button>
-                  <button className="py-1 px-4 bg-zinc-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90">
-                    <span className=" text-sm">Restrict Account</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="py-1 px-4 bg-emerald-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
-                  >
-                    <span className=" text-sm">Activate Account</span>
-                  </button>
+                  {!formData.isDisabled && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, isDisabled: true })
+                      }
+                      className="py-1 px-4 bg-indigo-800 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                    >
+                      <span className=" text-sm">Suspend </span>
+                    </button>
+                  )}
+                  {!formData.isRestricted && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, isRestricted: true })
+                      }
+                      className="py-1 px-4 bg-zinc-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                    >
+                      <span className=" text-sm">Restrict </span>
+                    </button>
+                  )}
+                  {formData.isDisabled && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, isDisabled: false })
+                      }
+                      className="py-1 px-4 bg-emerald-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                    >
+                      <span className=" text-sm">Activate </span>
+                    </button>
+                  )}
+                  {formData.isRestricted && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({ ...formData, isRestricted: false })
+                      }
+                      className="py-1 px-4 bg-emerald-700 text-white shadow-lg hover:shadow-none transition-all duration-300 hover:opacity-90"
+                    >
+                      <span className=" text-sm">Unrestrict</span>
+                    </button>
+                  )}
                 </>
               ) : (
                 ""
@@ -368,7 +435,7 @@ export default function UserProfile() {
           </div>
         </form>
       </main>
-      {loading && <DashboardLoader />}
+      {userLoading && <DashboardLoader />}
       {openModal && (
         <DeleteModal
           role={role}
@@ -377,6 +444,7 @@ export default function UserProfile() {
           userId={userId}
         />
       )}
+      {isLoading && <ImageLoader />}
     </div>
   );
 }

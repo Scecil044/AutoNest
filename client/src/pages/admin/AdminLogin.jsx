@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GiPadlockOpen } from "react-icons/gi";
 import { Alert } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   loginRejectedState,
   loginFulfilledState,
@@ -67,10 +67,10 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center font-serif">
+    <div className="min-h-screen flex items-center justify-center font-serif bg-linen">
       <form
         onSubmit={loginUser}
-        className="flex flex-col shadow-xl shadow-slate-200 w-[400px] p-5 transition-all hover:scale-105 border-gray-300"
+        className="flex flex-col shadow-xl shadow-slate-200 w-[400px] p-5 transition-all border-gray-300 bg-white z-50"
       >
         <div className="relative mb-8">
           <h1 className="text-center text-2xl font-bold z-50 absolute right-24">
@@ -126,7 +126,7 @@ export default function AdminLogin() {
         </div>
         <button
           disabled={isLoading}
-          className="py-1 flex items-center justify-center gap-1 bg-pink-600 text-white  shadow-md hover:bg-pink-600 transition-all duration-300 hover:shadow-none relative disabled:cursor-not-allowed"
+          className="py-1 flex items-center justify-center gap-1 bg-darkGreen text-white  shadow-md hover:opacity-80 transition-all duration-300 hover:shadow-none relative disabled:cursor-not-allowed"
         >
           {isLoading && (
             <div className="h-5 w-5 rounded-full border-r-2 border-b-2 animate-spin"></div>
@@ -134,6 +134,13 @@ export default function AdminLogin() {
           Login
           <GiPadlockOpen className="w-5 h-5 absolute left-1 text-black/50" />
         </button>
+
+        <div className="mt-5 text-sm">
+          <span>By continuing you agree to AutoNestKenys</span>
+          <Link className="text-blue-500 hover:underline">
+            Terms of service and use
+          </Link>
+        </div>
       </form>
     </div>
   );

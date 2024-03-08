@@ -1,23 +1,21 @@
-import { useState } from "react";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { app } from "../firebase";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   loginFulfilledState,
-  loginPendingState,
   loginRejectedState,
-} from "../firebase/userSlice";
+} from "../../firebase/userSlice";
+import { app } from "../../firebase";
 
-export default function Oauth() {
+export default function AdminOauth() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const continueWithGoogle = async () => {
+  const GoogleAuth = async () => {
     try {
-      dispatch(loginPendingState());
       const auth = getAuth(app);
       const provider = new GoogleAuthProvider();
       const response = await signInWithPopup(auth, provider);
@@ -39,15 +37,9 @@ export default function Oauth() {
         setLoading(false);
         return;
       }
-      if (res.ok) {
-        dispatch(loginFulfilledState(data));
-        setLoading(false);
-        if (data.isAdmin) {
-          navigate("/dashboard");
-        } else {
-          navigate("/my/dash");
-        }
-      }
+      dispatch(loginFulfilledState(data));
+      setLoading(false);
+      navigate("/");
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -55,13 +47,18 @@ export default function Oauth() {
     }
   };
   return (
-    <div>
+    <div className="mt-2">
       <button
-        onClick={continueWithGoogle}
-        to="/login"
-        className="py-1 px-24 bg-popsicle"
+        onClick={GoogleAuth}
+        type="button"
+        className="w-full flex items-center gap-2 justify-center py-1 shadow-lg hover:shadow-md transition-all duration-200 border-x-gray-400 border"
       >
-        Sign In
+        <img
+          src="/icons8-google.svg"
+          alt="..."
+          className="h-5 w-5 object-cover rounded-full"
+        />
+        Continue with google
       </button>
     </div>
   );
