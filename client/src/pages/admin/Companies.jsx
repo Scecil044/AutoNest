@@ -64,7 +64,7 @@ export default function Companies() {
                 <span className="font-bold font-serif text-red-600">
                   Error info!
                 </span>{" "}
-                Could not load companies. Please chack your interent connection
+                Could not load companies. Please check your internet connection
                 or refresh this module
               </span>
             </Alert>

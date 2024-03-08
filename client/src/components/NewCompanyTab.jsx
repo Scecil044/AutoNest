@@ -1,6 +1,13 @@
 import { Alert } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
+import ImageLoader from "./common/ImageLoader";
 
 export default function NewCompanyTab() {
   const [formData, setFormData] = useState({});
@@ -10,16 +17,24 @@ export default function NewCompanyTab() {
   const [companyTypeError, setCompanyTypeError] = useState(false);
   const [ownerError, setOwenerError] = useState(false);
   const [cityError, setCityError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
   const [users, setUsers] = useState([]);
   const [companyLogo, setCompanyLogo] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
   //creating company
   const [creationLoader, setCreationLoader] = useState(false);
   const [creationError, setCreationError] = useState(false);
+  // banner image upload
+  const [bannerImageError, setBannerImageError] = useState(false);
+  const [imageUploadLoader, setImageUploadLoader] = useState(false);
+  const [companyLogoError, setCompanyLogoError] = useState(false);
+  // function to submit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -41,8 +56,74 @@ export default function NewCompanyTab() {
         setLoading(false);
       }
     };
+    // handle brandLogo
+    if (bannerImage) {
+      const processBannerImage = async () => {
+        setBannerImageError(false);
+        setImageUploadLoader(true);
+        const fileName = new Date().getTime() + bannerImage.name;
+        const storage = getStorage(app);
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, bannerImage);
+        uploadTask.on(
+          "status_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setBannerImageError(false);
+            setImageUploadLoader(true);
+          },
+          (error) => {
+            setBannerImageError(error);
+            setImageUploadLoader(false);
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              setFormData({ ...formData, bannerImage: downloadURL });
+              setBannerImageError(false);
+              setImageUploadLoader(false);
+            });
+          }
+        );
+      };
+      processBannerImage();
+    }
+    // handle Company logo
+    if (companyLogo) {
+      const processCompanyLogo = async () => {
+        setCompanyLogoError(false);
+        setImageUploadLoader(true);
+        const fileName = new Date().getTime() + companyLogo.name;
+        const storage = getStorage(app);
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, bannerImage);
+        uploadTask.on(
+          "status_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setCompanyLogoError(false);
+            setImageUploadLoader(true);
+          },
+          (error) => {
+            setCompanyLogoError(error);
+            setImageUploadLoader(false);
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              setFormData({ ...formData, companyLogo: downloadURL });
+              setCompanyLogoError(false);
+              setImageUploadLoader(false);
+            });
+          }
+        );
+      };
+      processCompanyLogo();
+    }
+
     fetchUsers();
-  }, []);
+  }, [bannerImage, companyLogo]);
+  console.log(formData);
 
   return (
     <>
@@ -65,7 +146,10 @@ export default function NewCompanyTab() {
           </span>
         </Alert>
       )}
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-3"
+      >
         <div className="flex flex-col">
           <label className="text-sm font-semibold">Company Name</label>
           <input
@@ -106,7 +190,8 @@ export default function NewCompanyTab() {
             className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-pink-50"
           >
             <option value="">Select</option>
-            <option value="Kenya">Kenya</option>
+            <option value="Car Yard">Car Yard</option>
+            <option value="Show Room">Show Room</option>
           </select>
           {companyTypeError && (
             <span className="text-sm text-red-600">{companyTypeError}</span>
@@ -167,20 +252,72 @@ export default function NewCompanyTab() {
             <span className="text-sm text-red-600">{ownerError}</span>
           )}
         </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-semibold">Phone Number</label>
+          <input
+            type="text"
+            placeholder="e.g +254700909090"
+            id="companyPhoneNumber"
+            onChange={(e) =>
+              setFormData({ ...formData, companyPhoneNumber: e.target.value })
+            }
+            className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-pink-50"
+          />
+          {phoneError && (
+            <span className="text-sm text-red-600">{phoneError}</span>
+          )}
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-semibold">CompanyEmail</label>
+          <input
+            type="email"
+            placeholder="example@gmail.com"
+            id="companyEmail"
+            onChange={(e) =>
+              setFormData({ ...formData, companyEmail: e.target.value })
+            }
+            className="py-1 px-2 focus:outline-none focus:ring-0 border border-gray-400 rounded focus:bg-pink-50"
+          />
+          {emailError && (
+            <span className="text-sm text-red-600">{emailError}</span>
+          )}
+        </div>
       </form>
+      {bannerImageError ||
+        (companyLogoError && (
+          <div className="my-1">
+            <Alert color="failure" withBorderAccent>
+              <span>
+                <span className="font-bold font-serif">Upload error!</span> The
+                selected image must not be of size greater than 2 megabytes
+              </span>
+            </Alert>
+          </div>
+        ))}
       <div className="mt-3 grid grid-cols-1 md:grid-cols-2">
         <div className="flex flex-col">
           <label className="text-sm font-semibold">Company Logo</label>
           <div className="flex items-center justify-between">
-            <input type="file" id="companyLogo" accept="image/*" />
+            <input
+              type="file"
+              id="companyLogo"
+              accept="image/*"
+              onChange={(e) => setCompanyLogo(e.target.files[0])}
+            />
           </div>
         </div>
         <div className="flex flex-col">
           <label className="text-sm font-semibold">Banner Image</label>
           <div className="flex items-center justify-between">
-            <input type="file" id="bannerImage" accept="image/*" />
+            <input
+              type="file"
+              id="bannerImage"
+              accept="image/*"
+              onChange={(e) => setBannerImage(e.target.files[0])}
+            />
           </div>
         </div>
+        {/* image previews */}
         <div className="logo-preview mt-1">
           {formData.companyLogo && (
             <img
@@ -210,6 +347,7 @@ export default function NewCompanyTab() {
           )}
           Submit
         </button>
+        {imageUploadLoader && <ImageLoader />}
       </div>
     </>
   );
