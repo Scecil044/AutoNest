@@ -19,7 +19,7 @@ import { app } from "../../firebase";
 const chartSetting = {
   xAxis: [
     {
-      label: "rainfall (mm)",
+      label: "vehicles (mm)",
     },
   ],
   width: 400,
@@ -509,7 +509,7 @@ export default function ViewCompany() {
                   series={[
                     {
                       dataKey: "seoul",
-                      label: "Seoul rainfall",
+                      label: "Sold vehicles",
                       valueFormatter,
                     },
                   ]}
