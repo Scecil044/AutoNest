@@ -30,6 +30,7 @@ import EditVehicle from "./pages/admin/EditVehicle";
 import AdminLogin from "./pages/admin/AdminLogin";
 import UserHome from "./pages/admin/UserHome";
 import SubscriptionModal from "./pages/SubscriptionModal";
+import BusinessProfile from "./pages/admin/BusinessProfile";
 
 export default function App() {
   const [showFooter, setShowFooter] = useState(true);
@@ -64,6 +65,7 @@ export default function App() {
           <Route path="" element={<AdminLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/my/dash" element={<UserHome />} />
+            <Route path="/business/profile" element={<BusinessProfile />} />
             <Route path="/profile/:id" element={<UserProfile />} />
             <Route path="/users" element={<Users />} />
             <Route path="/vehicles" element={<Vehicles />} />

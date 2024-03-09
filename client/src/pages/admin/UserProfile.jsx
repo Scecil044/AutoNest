@@ -334,26 +334,28 @@ export default function UserProfile() {
               Danger Zone
             </h1>
             {/* user rights */}
-            <div className="w-full my-3">
-              <div className="flex flex-col gap-2 w-full">
-                <div className="flex items-center gap-2 ">
-                  <div className="text-nowrap flex-1">
-                    <h1 className="text-nowrap">System Rights</h1>
+            {formData?.isAdmin && (
+              <div className="w-full my-3">
+                <div className="flex flex-col gap-2 w-full">
+                  <div className="flex items-center gap-2 ">
+                    <div className="text-nowrap flex-1">
+                      <h1 className="text-nowrap">System Rights </h1>
+                    </div>
+                    <select
+                      id="isAdmin"
+                      onChange={handleChange}
+                      className="border-gray-300 focus:outline-none focus:ring-0 w-full py-1 px-2"
+                    >
+                      <option value="false">
+                        {formData.isAdmin ? "System Admin" : "User"}
+                      </option>
+                      <option value="true">Administrator</option>
+                      <option value="false">User</option>
+                    </select>
                   </div>
-                  <select
-                    id="isAdmin"
-                    onChange={handleChange}
-                    className="border-gray-300 focus:outline-none focus:ring-0 w-full py-1 px-2"
-                  >
-                    <option value="false">
-                      {formData.isAdmin ? "System Admin" : "User"}
-                    </option>
-                    <option value="true">Administrator</option>
-                    <option value="false">User</option>
-                  </select>
                 </div>
               </div>
-            </div>
+            )}
             {/* Delete section */}
             <div className="grid grid-cols-3 gap-3">
               {!user.isAdmin ? (

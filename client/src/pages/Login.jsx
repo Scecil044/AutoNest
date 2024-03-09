@@ -7,6 +7,7 @@ import {
   loginRejectedState,
 } from "../firebase/userSlice";
 import { toast } from "react-toastify";
+import BusinessSignUp from "../components/BusinessSignUp";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function Login() {
   const [formData, setFormData] = useState({});
   const [passwordError, setPasswordError] = useState(null);
   const [emailError, setEmailError] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -114,7 +116,10 @@ export default function Login() {
 
         <div className="mt-5 text-sm flex flex-col">
           <span className="font-semibold">Buy for Business</span>
-          <Link className="text-blue-500 hover:underline">
+          <Link
+            onClick={() => setOpenModal(true)}
+            className="text-blue-500 hover:underline"
+          >
             Want to sell on AutoNestKe?
           </Link>
         </div>
@@ -130,6 +135,9 @@ export default function Login() {
           Create your account
         </Link>
       </div>
+      {openModal && (
+        <BusinessSignUp openModal={openModal} setOpenModal={setOpenModal} />
+      )}
     </div>
   );
 }

@@ -198,6 +198,10 @@ const userLinks = [
     name: "Home",
     link: "/my/dash",
   },
+  {
+    name: "Business",
+    link: "/business/profile",
+  },
 ];
 const colors = ["white", "black", "blue", "red", "silver", "grey"];
 const fuelType = ["super", "diesel", "petrol", "Hybrid", "electric"];

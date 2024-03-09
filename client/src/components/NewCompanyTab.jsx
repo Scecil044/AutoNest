@@ -204,7 +204,7 @@ export default function NewCompanyTab() {
 
     fetchUsers();
   }, [bannerImage, companyLogo, creationLoader]);
-  console.log(formData);
+  
 
   return (
     <form onSubmit={handleSubmit}>

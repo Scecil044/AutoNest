@@ -68,7 +68,7 @@ export default function AdminSidebar() {
                 <FaUsers className={` w-8 h-8 ml-3 md:ml-0 md:h-5 md:w-5`} />
               ) : item.name === "Vehicles" ? (
                 <IoCarSport className={` w-8 h-8 ml-3 md:ml-0 md:h-5 md:w-5`} />
-              ) : item.name === "companies" ? (
+              ) : item.name === "Business" ? (
                 <MdBusiness className={` w-8 h-8 ml-3 md:ml-0 md:h-5 md:w-5`} />
               ) : (
                 ""

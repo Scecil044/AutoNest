@@ -24,20 +24,21 @@ export default function SubscribeModal({
     <div className="min-h-screen h-full inset-0 fixed bg-black/70 flex items-center justify-center z-40 ">
       <form
         onSubmit={handleSubmit}
-        className="p-5 bg-white relative w-[80%] md:w-[51%] rounded shadow-lg"
+        className="p-5 bg-white relative w-[89%] md:w-[51%] rounded shadow-lg"
       >
         <IoClose
           onClick={() => {
             setOpenModal(false);
           }}
-          className="h-8 w-8 -top-5 text-white -right-10 absolute cursor-pointer"
+          className="h-8 w-8 -top-5 hidden md:inline text-white -right-10 absolute cursor-pointer"
         />
         <div className="my-1">
           <Alert color="warning" withBorderAccent>
             <span>
               <span className="font-medium">Just a step away!</span> Fill out
-              your master card or visa card details to checkout
+              your master card or visa card details to checkout.
             </span>
+            
           </Alert>
         </div>
         <div className="flex gap-5">
@@ -89,9 +90,7 @@ export default function SubscribeModal({
               <p className=" text-xl font-bold">$0</p>
             </div>
             <div className="flex mb-2 gap-1">
-              <h1 className="text-nowrap font-semibold">
-                Your next subscription:
-              </h1>
+              <h1 className="font-semibold">Your next subscription:</h1>
 
               <p className="text-nowrap">
                 {" "}
@@ -115,7 +114,7 @@ export default function SubscribeModal({
               <h1>Grand total:</h1>
               <p className=" text-xl font-bold">$120</p>
             </div>
-            <button className="py-1 text-white bg-darkBlue mt-2 w-full">
+            <button className="py-1 text-white bg-darkBlue mt-2 w-full flex items-center justify-center">
               Confirm
             </button>
           </div>

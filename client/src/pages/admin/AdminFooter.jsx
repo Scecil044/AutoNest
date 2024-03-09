@@ -1,3 +1,3 @@
 export default function AdminFooter() {
-  return <div>AdminFooter</div>;
+  return <div className=""></div>;
 }

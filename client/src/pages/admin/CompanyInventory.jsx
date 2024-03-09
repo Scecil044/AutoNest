@@ -95,7 +95,7 @@ export default function CompanyInventory() {
     fetchVehicles();
   }, []);
 
-  console.log("inventory length", inventory.length);
+  // console.log("inventory length", inventory.length);
   return (
     <div className="min-h-screen">
       <div className="flex bg-gradient-to-tr from-pink-600 to-indigo-800 h-[200px] relative">
