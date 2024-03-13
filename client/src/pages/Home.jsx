@@ -76,9 +76,6 @@ export default function Home() {
           </div>
         </main>
       </div>
-      {openModal && (
-        <WelcomeModal openModal={openModal} setOpenModal={setOpenModal} />
-      )}
     </div>
   );
 }
