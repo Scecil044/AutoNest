@@ -12,6 +12,7 @@ import userRoutes from "./routes/user.routes.js";
 import companyRoutes from "./routes/company.route.js";
 import config from "./config/config.js";
 
+
 dotenv.config();
 connectDb();
 // Initialize Express and port

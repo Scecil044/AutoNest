@@ -29,7 +29,8 @@ if (error) {
 }
 
 const config = {
-
+    port: envVars.PORT,
+    env: envVars.ENV
 };
 
 export default config
